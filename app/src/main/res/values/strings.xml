@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Time to work</string>
+    <string name="come">Пришел</string>
+    <string name="gone">Ушел</string>
+    <string name="day_before">Предыдущий день</string>
+    <string name="day_after">Следующий день</string>
+    <string name="spentTimeToday">Был на работе:</string>
+    <string name="action_list">Список</string>
+    <string name="action_settings">Настройки</string>
+</resources>
