@@ -5,7 +5,7 @@ import java.util.List;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
-import nightgoat.timetowork.DaysDataSource;
+import nightgoat.timetowork.domain.DaysDataSource;
 
 public class DaysSource implements DaysDataSource {
 
@@ -13,14 +13,13 @@ public class DaysSource implements DaysDataSource {
 
     private final DaysDao daysDao;
 
-    public DaysSource(DaysDao daysDao){
+    public DaysSource(DaysDao daysDao) {
         this.daysDao = daysDao;
     }
 
-    public Flowable<List<DayEntity>> getAllDays(){
+    public Flowable<List<DayEntity>> getAllDays() {
         return daysDao.getAllDays();
     }
-
 
     public Completable addDay(DayEntity model) {
         return daysDao.insertDay(model);
@@ -34,7 +33,7 @@ public class DaysSource implements DaysDataSource {
         return daysDao.getDayByDate(date);
     }
 
-    public Completable deleteDaysWithoutTime(){
+    public Completable deleteDaysWithoutTime() {
         return daysDao.deleteDaysWithoutTime();
     }
 }

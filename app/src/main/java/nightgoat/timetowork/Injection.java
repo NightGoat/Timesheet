@@ -4,11 +4,12 @@ import android.content.Context;
 
 import nightgoat.timetowork.database.DaysDatabase;
 import nightgoat.timetowork.database.DaysSource;
-import nightgoat.timetowork.ui.ViewModelFactory;
+import nightgoat.timetowork.domain.DaysDataSource;
+import nightgoat.timetowork.presentation.ViewModelFactory;
 
 public class Injection {
 
-    private static DaysDataSource provideDaysDataSource(Context context) {
+    public static DaysDataSource provideDaysDataSource(Context context) {
         DaysDatabase database = DaysDatabase.getInstance(context);
         return new DaysSource(database.getDaysDao());
     }
@@ -17,4 +18,5 @@ public class Injection {
         DaysDataSource dataSource = provideDaysDataSource(context);
         return new ViewModelFactory(dataSource);
     }
+
 }

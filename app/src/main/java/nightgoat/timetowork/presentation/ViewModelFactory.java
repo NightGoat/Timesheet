@@ -1,12 +1,12 @@
-package nightgoat.timetowork.ui;
+package nightgoat.timetowork.presentation;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import nightgoat.timetowork.DaysDataSource;
-import nightgoat.timetowork.ui.listActivity.ListViewModel;
-import nightgoat.timetowork.ui.mainActivity.DaysViewModel;
+import nightgoat.timetowork.domain.DaysDataSource;
+import nightgoat.timetowork.presentation.list.ListViewModel;
+import nightgoat.timetowork.presentation.main.DaysViewModel;
 
 public class ViewModelFactory implements ViewModelProvider.Factory {
 

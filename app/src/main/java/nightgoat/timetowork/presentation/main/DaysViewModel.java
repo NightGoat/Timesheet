@@ -1,8 +1,11 @@
-package nightgoat.timetowork.ui.mainActivity;
+package nightgoat.timetowork.presentation.main;
 
 import android.util.Log;
 
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModel;
 
 import org.joda.time.DateTime;
@@ -20,10 +23,10 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.observers.DisposableMaybeObserver;
 import io.reactivex.schedulers.Schedulers;
-import nightgoat.timetowork.DaysDataSource;
+import nightgoat.timetowork.domain.DaysDataSource;
 import nightgoat.timetowork.database.DayEntity;
 
-public class DaysViewModel extends ViewModel {
+public class DaysViewModel extends ViewModel implements LifecycleObserver {
 
     private final String TAG = DaysViewModel.class.getName();
 
@@ -41,11 +44,16 @@ public class DaysViewModel extends ViewModel {
     private final DaysDataSource mDataSource;
     private DayEntity dayEntity;
 
-    public DaysViewModel(DaysDataSource dataSource){
+    public DaysViewModel(DaysDataSource dataSource) {
         mDataSource = dataSource;
         calendar = Calendar.getInstance();
         getDate();
         getDayEntity(date);
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    void onStart() {
+
     }
 
     public Flowable<List<DayEntity>> getDays() {
@@ -68,7 +76,7 @@ public class DaysViewModel extends ViewModel {
         getDayEntity(date);
     }
 
-    void setComeTime(String time){
+    void setComeTime(String time) {
         timeCome = time;
         dayEntity.setTimeCome(timeCome);
         mDisposable.add(
@@ -89,7 +97,7 @@ public class DaysViewModel extends ViewModel {
                         }));
     }
 
-    void setGoneTime(String time){
+    void setGoneTime(String time) {
         this.timeGone = time;
         dayEntity.setTimeGone(timeGone);
         mDisposable.add(
@@ -147,7 +155,7 @@ public class DaysViewModel extends ViewModel {
                                        timeComeLD.setValue("");
                                    }
                                }
-                        ));
+                ));
         dateLD.setValue(date);
 
     }
@@ -178,7 +186,7 @@ public class DaysViewModel extends ViewModel {
         date = String.format(Locale.getDefault(), "%d.%02d.%02d", year, month, day);
     }
 
-    void callForDispose(){
+    private void callForDispose() {
         Log.w(TAG, "Deleting all empty entities");
         mDataSource.deleteDaysWithoutTime()
                 .subscribeOn(Schedulers.io())
@@ -187,7 +195,7 @@ public class DaysViewModel extends ViewModel {
         mDisposable.clear();
     }
 
-    private void countComeGoneDifference(){
+    private void countComeGoneDifference() {
         if (timeCome != null && timeGone != null) {
             Log.d(TAG, "counting difference for timeCome: " + timeCome + " and timeGone: " + timeGone);
             DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm");
@@ -196,8 +204,7 @@ public class DaysViewModel extends ViewModel {
             if (goneTimeDT.isAfter(comeTimeDT)) {
                 timeDifference = formatter.print(new Duration(comeTimeDT, goneTimeDT).getMillis());
                 timeDifferenceLD.setValue(timeDifference);
-            }
-            else {
+            } else {
                 timeDifference = null;
                 timeDifferenceLD.setValue("Никаких путешествий во времени!");
             }
@@ -213,4 +220,42 @@ public class DaysViewModel extends ViewModel {
         }
     }
 
+    int getCurrentDay() {
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        return calendar.get(Calendar.DAY_OF_MONTH);
+    }
+
+    int getCurrentMonth() {
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        return calendar.get(Calendar.MONTH);
+    }
+
+    int getCurrentYear() {
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        return calendar.get(Calendar.YEAR);
+    }
+
+    String getCurrentTime() {
+        return String.format(Locale.getDefault(), "%02d:%02d", getCurrentHour(), getCurrentMinutes());
+    }
+
+    String getTime(int hour, int minute) {
+        return String.format(Locale.getDefault(), "%02d:%02d", hour, minute);
+    }
+
+    int getCurrentHour() {
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        return calendar.get(Calendar.HOUR_OF_DAY);
+    }
+
+    int getCurrentMinutes() {
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        return calendar.get(Calendar.MINUTE);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        callForDispose();
+    }
 }

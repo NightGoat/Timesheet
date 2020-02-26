@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.mainActivity.MainActivity">
+    tools:context=".presentation.main.MainActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -138,11 +138,13 @@
         android:layout_height="wrap_content"
         tools:text="Никаких путешествий во времени!"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:textSize="20sp"
         android:paddingStart="25dp"
         android:paddingEnd="5dp"/>
 
     </FrameLayout>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_come"
         style="@style/Widget.MaterialComponents.Button"

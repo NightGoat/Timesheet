@@ -1,4 +1,4 @@
-package nightgoat.timetowork;
+package nightgoat.timetowork.domain;
 
 import java.util.List;
 
