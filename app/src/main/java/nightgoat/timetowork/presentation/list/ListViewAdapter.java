@@ -25,11 +25,10 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
 
     private List<DayEntity> data = new ArrayList<>();
     private List<DayEntity> sourceData = new ArrayList<>();
-    private ViewModelFactory mViewModelFactory;
     private ListViewModel mViewModel;
 
     ListViewAdapter(Context context) {
-        mViewModelFactory = Injection.provideViewModelFactory(context);
+        ViewModelFactory mViewModelFactory = Injection.provideViewModelFactory(context);
         mViewModel = new ViewModelProvider((ViewModelStoreOwner) context, mViewModelFactory).get(ListViewModel.class);
     }
 
