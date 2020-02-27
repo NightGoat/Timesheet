@@ -10,34 +10,34 @@ import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-import nightgoat.timetowork.domain.DaysDataSource;
 import nightgoat.timetowork.database.DayEntity;
 import nightgoat.timetowork.domain.Interactor;
 
 public class ListViewModel extends ViewModel implements LifecycleObserver {
 
-    private final DaysDataSource mDataSource;
+    private Interactor interactor;
     MutableLiveData<List<DayEntity>> daysLD = new MutableLiveData<>();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    public ListViewModel(DaysDataSource dataSource) {
-        mDataSource = dataSource;
+    public ListViewModel(Interactor interactor) {
+         this.interactor = interactor;
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     void onStart() {
         compositeDisposable.add(
-                mDataSource.getAllDays()
-                        .subscribeOn(Schedulers.io())
+                interactor.getAllDays()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(dayEntities -> daysLD.setValue(dayEntities)));
-
     }
 
     @Override
     protected void onCleared() {
         compositeDisposable.clear();
         super.onCleared();
+    }
+
+    void deleteDay(DayEntity dayEntity) {
+        interactor.deleteDay(dayEntity).observeOn(AndroidSchedulers.mainThread()).subscribe();
     }
 }

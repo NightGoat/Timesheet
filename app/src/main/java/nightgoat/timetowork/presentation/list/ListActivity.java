@@ -68,7 +68,7 @@ public class ListActivity extends AppCompatActivity {
     private void initList() {
         Log.d(TAG, "initList()");
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        adapter = new ListViewAdapter();
+        adapter = new ListViewAdapter(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
     }

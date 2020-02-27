@@ -23,8 +23,8 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.observers.DisposableMaybeObserver;
 import io.reactivex.schedulers.Schedulers;
-import nightgoat.timetowork.domain.DaysDataSource;
 import nightgoat.timetowork.database.DayEntity;
+import nightgoat.timetowork.domain.Interactor;
 
 public class DaysViewModel extends ViewModel implements LifecycleObserver {
 
@@ -37,27 +37,26 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
     private final CompositeDisposable mDisposable = new CompositeDisposable();
 
     private List<DayEntity> days;
+    private Interactor interactor;
     private Calendar calendar;
     private int day, month, year, hourCome, hourGone, minuteCome, minuteGone;
     private String date, timeCome, timeGone, timeDifference;
 
-    private final DaysDataSource mDataSource;
     private DayEntity dayEntity;
 
-    public DaysViewModel(DaysDataSource dataSource) {
-        mDataSource = dataSource;
+    public DaysViewModel(Interactor interactor) {
+        this.interactor = interactor;
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    void onStart() {
         calendar = Calendar.getInstance();
         getDate();
         getDayEntity(date);
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    void onStart() {
-
-    }
-
     public Flowable<List<DayEntity>> getDays() {
-        return mDataSource.getAllDays()
+        return interactor.getAllDays()
                 .map(dayEntities -> {
                     days = dayEntities;
                     return dayEntities;
@@ -80,8 +79,7 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
         timeCome = time;
         dayEntity.setTimeCome(timeCome);
         mDisposable.add(
-                mDataSource.updateDay(dayEntity)
-                        .subscribeOn(Schedulers.io())
+                interactor.updateDay(dayEntity)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableCompletableObserver() {
                             @Override
@@ -101,8 +99,7 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
         this.timeGone = time;
         dayEntity.setTimeGone(timeGone);
         mDisposable.add(
-                mDataSource.updateDay(dayEntity)
-                        .subscribeOn(Schedulers.io())
+                interactor.updateDay(dayEntity)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableCompletableObserver() {
 
@@ -125,8 +122,7 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy.MM.dd");
         DateTime dt = dateTimeFormatter.parseDateTime(date);
         calendar.setTime(dt.toDate());
-        mDisposable.add(mDataSource.getDayByDayModel(date)
-                .subscribeOn(Schedulers.io())
+        mDisposable.add(interactor.getDayByDayModel(date)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableMaybeObserver<DayEntity>() {
                                    @Override
@@ -162,8 +158,7 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
 
     private void addDay() {
         dayEntity = new DayEntity(date);
-        mDisposable.add(mDataSource.addDay(dayEntity)
-                .subscribeOn(Schedulers.io())
+        mDisposable.add(interactor.addDay(dayEntity)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableCompletableObserver() {
                     @Override
@@ -188,7 +183,7 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
 
     private void callForDispose() {
         Log.w(TAG, "Deleting all empty entities");
-        mDataSource.deleteDaysWithoutTime()
+        interactor.deleteDaysWithoutTime()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
@@ -210,12 +205,12 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
             }
             dayEntity.setTimeWorked(timeDifference);
             mDisposable.add(
-                    mDataSource.updateDay(dayEntity)
+                    interactor.updateDay(dayEntity)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe());
         } else {
-            Log.e(TAG, "ERROR counting difference because timeCome is: " + timeCome + " and timeGone" + timeGone);
+            Log.e(TAG, "ERROR counting difference because timeCome is: " + timeCome + " and timeGone is: " + timeGone);
             timeDifferenceLD.setValue("00:00");
         }
     }

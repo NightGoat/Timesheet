@@ -7,7 +7,7 @@ import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import nightgoat.timetowork.database.DayEntity;
 
-public interface DaysDataSource {
+public interface DaysDataSourceRep {
 
     Flowable<List<DayEntity>> getAllDays();
 
@@ -18,4 +18,6 @@ public interface DaysDataSource {
     Maybe<DayEntity> getDayByDayModel(String date);
 
     Completable deleteDaysWithoutTime();
+
+    Completable deleteDay(DayEntity model);
 }

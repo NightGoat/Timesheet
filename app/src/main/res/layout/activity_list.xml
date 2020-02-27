@@ -6,14 +6,22 @@
     android:layout_height="match_parent"
     tools:context=".presentation.list.ListActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        style="@style/Widget.MaterialComponents.Toolbar.Surface">
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/list_activity_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <EditText
         android:id="@+id/list_activity_EditText"
@@ -21,7 +29,7 @@
         android:layout_height="wrap_content"
         android:inputType="date"
         android:hint="@string/search"
-        app:layout_constraintTop_toBottomOf="@id/list_activity_toolbar"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
         android:layout_margin="4dp"
         android:autofillHints="@string/search" />
 

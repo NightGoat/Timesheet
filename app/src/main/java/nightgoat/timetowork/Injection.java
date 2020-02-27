@@ -3,20 +3,22 @@ package nightgoat.timetowork;
 import android.content.Context;
 
 import nightgoat.timetowork.database.DaysDatabase;
-import nightgoat.timetowork.database.DaysSource;
-import nightgoat.timetowork.domain.DaysDataSource;
+import nightgoat.timetowork.database.DaysSourceRepImpl;
+import nightgoat.timetowork.domain.DaysDataSourceRep;
+import nightgoat.timetowork.domain.Interactor;
 import nightgoat.timetowork.presentation.ViewModelFactory;
 
 public class Injection {
 
-    public static DaysDataSource provideDaysDataSource(Context context) {
+    private static DaysDataSourceRep provideDaysDataSource(Context context) {
         DaysDatabase database = DaysDatabase.getInstance(context);
-        return new DaysSource(database.getDaysDao());
+        return new DaysSourceRepImpl(database.getDaysDao());
     }
 
     public static ViewModelFactory provideViewModelFactory(Context context) {
-        DaysDataSource dataSource = provideDaysDataSource(context);
-        return new ViewModelFactory(dataSource);
+        DaysDataSourceRep dataSource = provideDaysDataSource(context);
+        Interactor interactor = new Interactor(dataSource);
+        return new ViewModelFactory(interactor);
     }
 
 }

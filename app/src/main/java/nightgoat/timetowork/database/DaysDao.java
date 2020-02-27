@@ -21,9 +21,6 @@ public interface DaysDao {
 
     @Query("SELECT * FROM days WHERE date = :date")
     Maybe<DayEntity> getDayByDate(String date);
-//
-//    @Query("SELECT * FROM days WHERE date = :date")
-//    Flowable<DayEntity> getDayByDate(String date);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable insertDay(DayEntity model);
@@ -32,7 +29,7 @@ public interface DaysDao {
     Completable updateDay(DayEntity model);
 
     @Delete
-    void deleteDay(DayEntity model);
+    Completable deleteDay(DayEntity model);
 
     @Query("DELETE FROM days WHERE time_come is NULL AND time_gone is NULL")
     Completable deleteDaysWithoutTime();

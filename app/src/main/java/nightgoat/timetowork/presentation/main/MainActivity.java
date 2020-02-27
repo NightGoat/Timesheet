@@ -22,7 +22,6 @@ import java.util.Locale;
 
 import nightgoat.timetowork.Injection;
 import nightgoat.timetowork.R;
-import nightgoat.timetowork.domain.DaysDataSource;
 import nightgoat.timetowork.presentation.list.ListActivity;
 import nightgoat.timetowork.presentation.ViewModelFactory;
 
@@ -73,8 +72,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViewModel() {
-        DaysDataSource daysDataSource = Injection.provideDaysDataSource(this);
-
         mViewModelFactory = Injection.provideViewModelFactory(this);
         mViewModel = new ViewModelProvider(this, mViewModelFactory).get(DaysViewModel.class);
         getLifecycle().addObserver(mViewModel);
