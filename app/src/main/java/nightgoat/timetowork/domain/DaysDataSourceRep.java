@@ -20,4 +20,6 @@ public interface DaysDataSourceRep {
     Completable deleteDaysWithoutTime();
 
     Completable deleteDay(DayEntity model);
+
+    Completable deleteEverything();
 }

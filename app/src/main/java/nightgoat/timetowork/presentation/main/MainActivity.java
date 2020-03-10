@@ -3,6 +3,7 @@ package nightgoat.timetowork.presentation.main;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MotionEventCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.DatePickerDialog;
@@ -10,44 +11,40 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
-import java.util.Calendar;
 import java.util.Locale;
 
 import nightgoat.timetowork.Injection;
 import nightgoat.timetowork.R;
+import nightgoat.timetowork.TimeUtils;
 import nightgoat.timetowork.presentation.list.ListActivity;
 import nightgoat.timetowork.presentation.ViewModelFactory;
+import nightgoat.timetowork.presentation.settings.SettingsActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
     private ImageButton leftArrowIB, rightArrowIB;
-    private TextView dayTV, leftHoursTV, comeTV, goneTV;
     private MaterialButton comeBtn, goneBtn;
-    private String date;
     private DaysViewModel mViewModel;
-    private ViewModelFactory mViewModelFactory;
-    private Calendar calendar = Calendar.getInstance();
     private Toolbar toolbar;
+    private GestureDetector gestureDetector;
+    private TextInputEditText comeET, goneET, wasOnWorkET, dayET;
+    private TextInputLayout comeTIL, goneTIL, dayTIL;
+    private Integer day, month, year;
 
     private static final String TAG = MainActivity.class.getName();
-
-    private void initViews() {
-        leftArrowIB = findViewById(R.id.left_btn);
-        rightArrowIB = findViewById(R.id.right_btn);
-        dayTV = findViewById(R.id.day_text);
-        leftHoursTV = findViewById(R.id.time_left_today_TV);
-        comeTV = findViewById(R.id.come_today_TV);
-        goneTV = findViewById(R.id.gone_today_TV);
-        comeBtn = findViewById(R.id.button_come);
-        goneBtn = findViewById(R.id.button_gone);
-        toolbar = findViewById(R.id.toolbar);
-    }
+    private static final int SWIPE_THRESHOLD = 100;
+    private static final int SWIPE_VELOCITY_THRESHOLD = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,11 +53,26 @@ public class MainActivity extends AppCompatActivity {
         initViews();
         setSupportActionBar(toolbar);
         initViewModel();
-
-        mViewModel.timeComeLD.observe(this, data -> comeTV.setText(data));
-        mViewModel.timeGoneLD.observe(this, data -> goneTV.setText(data));
-        mViewModel.dateLD.observe(this, data -> dayTV.setText(data));
-        mViewModel.timeDifferenceLD.observe(this, data -> leftHoursTV.setText(data));
+        gestureDetector = new GestureDetector(this, this);
+        //Пришел:
+        mViewModel.timeComeLD.observe(this, data -> comeET.setText(data));
+        //Ушел
+        mViewModel.timeGoneLD.observe(this, data -> goneET.setText(data));
+        //Дата
+        mViewModel.dateLD.observe(this, data -> dayET.setText(data));
+        //День недели
+        mViewModel.dayOfWeek.observe(this, data -> dayTIL.setHint(data));
+        //Был на работе
+        mViewModel.timeDifferenceLD.observe(this, data -> wasOnWorkET.setText(data));
+        //День, месяц, год для DatePickerDialog
+        mViewModel.dayLD.observe(this, data -> day = data);
+        mViewModel.monthLD.observe(this, data -> month = data - 1);
+        mViewModel.yearLD.observe(this, data -> year = data);
+        mViewModel.isGoneTimeExistLD.observe(this, isGoneTimeExist -> {
+            goneTIL.setEndIconVisible(isGoneTimeExist);
+            if (isGoneTimeExist) goneET.setTextColor(getResources().getColor(R.color.colorAccent));
+            else goneET.setTextColor(getResources().getColor(R.color.colorGrey));
+        });
 
         initLeftArrowClickListener();
         initRightArrowClickListener();
@@ -69,12 +81,43 @@ public class MainActivity extends AppCompatActivity {
         initComeTextViewClickListener();
         initGoneTextViewClickListener();
         initDayTextViewClickListener();
+        initComeTILEndIconClickListener();
+        initGoneTILEndIconClickListener();
+    }
+
+    private void initGoneTILEndIconClickListener() {
+        goneTIL.setEndIconOnClickListener(v -> mViewModel.setGoneTime(null));
+    }
+
+    private void initComeTILEndIconClickListener() {
+        comeTIL.setEndIconOnClickListener(v -> mViewModel.setComeTime(null));
+    }
+
+    private void initViews() {
+        leftArrowIB = findViewById(R.id.left_btn);
+        rightArrowIB = findViewById(R.id.right_btn);
+        dayET = findViewById(R.id.dayET);
+        dayTIL = findViewById(R.id.dayTIL);
+        wasOnWorkET = findViewById(R.id.wasOnWorkET);
+        wasOnWorkET.setEnabled(false);
+        comeET = findViewById(R.id.comeET);
+        goneET = findViewById(R.id.goneET);
+        comeBtn = findViewById(R.id.button_come);
+        goneBtn = findViewById(R.id.button_gone);
+        toolbar = findViewById(R.id.toolbar);
+        comeTIL = findViewById(R.id.comeTIL);
+        goneTIL = findViewById(R.id.goneTIL);
     }
 
     private void initViewModel() {
-        mViewModelFactory = Injection.provideViewModelFactory(this);
+        ViewModelFactory mViewModelFactory = Injection.provideViewModelFactory(getApplicationContext());
         mViewModel = new ViewModelProvider(this, mViewModelFactory).get(DaysViewModel.class);
         getLifecycle().addObserver(mViewModel);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     public void initLeftArrowClickListener() {
@@ -86,41 +129,43 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initComeBtnClickListener() {
-        comeBtn.setOnClickListener(v -> mViewModel.setComeTime(mViewModel.getCurrentTime()));
+        comeBtn.setOnClickListener(v -> mViewModel.setComeTime(TimeUtils.getCurrentTime()));
     }
 
     public void initGoneBtnClickListener() {
-        goneBtn.setOnClickListener(v -> mViewModel.setGoneTime(mViewModel.getCurrentTime()));
+        goneBtn.setOnClickListener(v -> mViewModel.setGoneTime(TimeUtils.getCurrentTime()));
     }
 
     public void initComeTextViewClickListener() {
-        comeTV.setOnClickListener(v -> {
+        comeET.setOnClickListener(v -> {
             TimePickerDialog tpd = new TimePickerDialog(this,
                     (view, hourOfDay, minuteOfDay) ->
-                            mViewModel.setComeTime(mViewModel.getTime(hourOfDay, minuteOfDay))
-                    , mViewModel.getCurrentHour(), mViewModel.getCurrentMinutes(), true);
+                            mViewModel.setComeTime(TimeUtils.getTime(hourOfDay, minuteOfDay))
+                    , TimeUtils.getCurrentHour(), TimeUtils.getCurrentMinutes(), true);
             tpd.show();
         });
     }
 
     public void initGoneTextViewClickListener() {
-        goneTV.setOnClickListener(v -> {
+        goneET.setOnClickListener(v -> {
             TimePickerDialog tpd = new TimePickerDialog(this,
                     (view, hourOfDay, minuteOfDay) ->
-                            mViewModel.setGoneTime(mViewModel.getTime(hourOfDay, minuteOfDay)),
-                    mViewModel.getCurrentHour(), mViewModel.getCurrentMinutes(), true);
+                            mViewModel.setGoneTime(TimeUtils.getTime(hourOfDay, minuteOfDay)),
+                    TimeUtils.getCurrentHour(), TimeUtils.getCurrentMinutes(), true);
             tpd.show();
         });
     }
 
     private void initDayTextViewClickListener() {
-        dayTV.setOnClickListener(v -> {
-            DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
-                String date = String.format(Locale.getDefault(), "%d.%02d.%02d", year, month + 1, dayOfMonth);
-                mViewModel.getDayEntity(date);
-            }, mViewModel.getCurrentYear(), mViewModel.getCurrentMonth(), mViewModel.getCurrentDay());
-            datePickerDialog.show();
-        });
+        dayET.setOnClickListener(v -> showDatePickerDialog());
+    }
+
+    private void showDatePickerDialog() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
+            String date = String.format(Locale.getDefault(), "%d.%02d.%02d", year, month + 1, dayOfMonth);
+            mViewModel.getDayEntity(date);
+        }, year, month, day);
+        datePickerDialog.show();
     }
 
     @Override
@@ -133,13 +178,85 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_list) {
-            Intent intent = new Intent(this, ListActivity.class);
-            startActivity(intent);
-            Log.d(TAG, "Going to another activity");
+            goToListActivity();
             return true;
-        }
+        } else if(id == R.id.action_today) {
+            mViewModel.getDayEntity(TimeUtils.getCurrentDate());
+        } else goToSettingsActivity();
         return super.onOptionsItemSelected(item);
     }
 
+    private void goToListActivity() {
+        Intent intent = new Intent(this, ListActivity.class);
+        startActivity(intent);
+        Log.d(TAG, "Going to List activity");
+    }
+
+    private void goToSettingsActivity() {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+        Log.d(TAG, "Going to Settings activity");
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+        if (this.gestureDetector.onTouchEvent(event)) {
+            return true;
+        }
+        return super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+        Log.d(TAG, "onShowPress: " + e.toString());
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        boolean result = false;
+        try {
+            float diffY = e2.getY() - e1.getY();
+            float diffX = e2.getX() - e1.getX();
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                    if (diffX > 0) {
+                        mViewModel.setPreviousDay();
+                    } else {
+                        mViewModel.setNextDay();
+                    }
+                    result = true;
+                }
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return result;
+    }
+
+    @Override
+    protected void onPause() {
+        mViewModel.deleteEmptyEntities();
+        super.onPause();
+    }
 }
 

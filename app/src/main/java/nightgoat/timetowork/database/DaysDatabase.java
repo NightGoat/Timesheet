@@ -9,10 +9,11 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import nightgoat.timetowork.database.DayEntity;
-import nightgoat.timetowork.database.DaysDao;
 
-@Database(entities = {DayEntity.class}, version = 2)
+@Database(
+        entities = {DayEntity.class},
+        version = 2,
+        exportSchema = false)
 public abstract class DaysDatabase extends RoomDatabase {
 
     private static final Migration MIGRATION_1_2 = new Migration(1, 2) {

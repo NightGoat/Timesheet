@@ -13,7 +13,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import nightgoat.timetowork.database.DayEntity;
 import nightgoat.timetowork.domain.Interactor;
 
-public class ListViewModel extends ViewModel implements LifecycleObserver {
+public class ListViewModel extends ViewModel implements LifecycleObserver, IListViewModel {
 
     private Interactor interactor;
     MutableLiveData<List<DayEntity>> daysLD = new MutableLiveData<>();
@@ -37,7 +37,12 @@ public class ListViewModel extends ViewModel implements LifecycleObserver {
         super.onCleared();
     }
 
-    void deleteDay(DayEntity dayEntity) {
+    @Override
+    public void deleteDay(DayEntity dayEntity) {
         interactor.deleteDay(dayEntity).observeOn(AndroidSchedulers.mainThread()).subscribe();
+    }
+
+    void saveDBtoExcel(){
+
     }
 }

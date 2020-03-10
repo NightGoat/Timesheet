@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.list.ListActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/settings_toolbar_layout"
+        style="@style/Widget.MaterialComponents.Toolbar.Surface"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/settings_activity_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="@drawable/ic_keyboard_arrow_left" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ProgressBar
+        android:id="@+id/settings_progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="invisible"
+        />
+
+    <TextView
+        android:id="@+id/settings_needToBeOnWork_TV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/needToBeOnWorkTime"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/settings_toolbar_layout" />
+
+    <TextView
+        android:id="@+id/settings_needToBeOnWork_value_TV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:autofillHints="00:00"
+        android:background="@drawable/ripple"
+        android:gravity="center"
+        android:text="08:30"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@id/settings_needToBeOnWork_TV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/settings_needToBeOnWork_TV"
+        app:layout_constraintTop_toTopOf="@id/settings_needToBeOnWork_TV"
+        tools:ignore="HardcodedText"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/settings_saveDBtoExcel_Btn"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:text="@string/saveToExcel"
+        app:layout_constraintTop_toBottomOf="@id/settings_needToBeOnWork_value_TV"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/settings_openExcel_Btn"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:text="@string/openExcel"
+        app:layout_constraintTop_toBottomOf="@id/settings_saveDBtoExcel_Btn"
+        android:enabled="false"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/settings_cleanDB_Btn"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:text="@string/cleanDB"
+        app:layout_constraintTop_toBottomOf="@id/settings_openExcel_Btn" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="App icon is Time Machine icon by Icons8 \n https://icons8.com/icon/set/time-tracking/dusk"
+        app:layout_constraintTop_toBottomOf="@id/settings_cleanDB_Btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:autoLink="web"
+        android:gravity="center"
+        tools:ignore="HardcodedText"
+        android:layout_marginTop="16dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

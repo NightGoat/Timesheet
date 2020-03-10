@@ -18,7 +18,10 @@ public class Injection {
     public static ViewModelFactory provideViewModelFactory(Context context) {
         DaysDataSourceRep dataSource = provideDaysDataSource(context);
         Interactor interactor = new Interactor(dataSource);
-        return new ViewModelFactory(interactor);
+        ResourceHolder resourceHolder = new ResourceHolder(context);
+        return new ViewModelFactory(interactor, resourceHolder);
     }
+
+
 
 }

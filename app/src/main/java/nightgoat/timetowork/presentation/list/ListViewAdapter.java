@@ -1,6 +1,5 @@
 package nightgoat.timetowork.presentation.list;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,28 +7,27 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStore;
-import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.chip.Chip;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import nightgoat.timetowork.Injection;
 import nightgoat.timetowork.R;
+import nightgoat.timetowork.TimeUtils;
 import nightgoat.timetowork.database.DayEntity;
-import nightgoat.timetowork.presentation.ViewModelFactory;
 
 public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHolder> {
 
     private List<DayEntity> data = new ArrayList<>();
     private List<DayEntity> sourceData = new ArrayList<>();
-    private ListViewModel mViewModel;
+    private IListViewModel viewModel;
 
-    ListViewAdapter(Context context) {
-        ViewModelFactory mViewModelFactory = Injection.provideViewModelFactory(context);
-        mViewModel = new ViewModelProvider((ViewModelStoreOwner) context, mViewModelFactory).get(ListViewModel.class);
+    ListViewAdapter(IListViewModel viewModel) {
+        this.viewModel = viewModel;
     }
 
     void changeList(List<DayEntity> list) {
@@ -68,20 +66,26 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView cardDateTV;
-        private TextView cardWorkedTimeTV;
+        private Chip chipCame, chipGone, chipWas;
         private ImageButton deleteBtn;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             cardDateTV = itemView.findViewById(R.id.card_date_textView);
-            cardWorkedTimeTV = itemView.findViewById(R.id.card_timeWorked_textView);
+            chipCame = itemView.findViewById(R.id.chipCame);
+            chipGone = itemView.findViewById(R.id.chipGone);
+            chipWas = itemView.findViewById(R.id.chipWas);
             deleteBtn = itemView.findViewById(R.id.card_delete);
         }
 
         void bind(DayEntity day) {
-            cardDateTV.setText(day.getDate());
-            cardWorkedTimeTV.setText(String.format(itemView.getContext().getString(R.string.spentTimeToday) + " %s", day.getTimeWorked()));
-            deleteBtn.setOnClickListener(v -> mViewModel.deleteDay(day));
+            String timeCame, timeGone, timeWas;
+            String dateTitle = TimeUtils.getDateInNormalFormat(day.getDate()) + " " + TimeUtils.getDayOfTheWeek(day.getDate());
+            cardDateTV.setText(dateTitle);
+            if ((timeCame = day.getTimeCome()) != null) chipCame.setText(timeCame);
+            if ((timeGone = day.getTimeGone()) != null) chipGone.setText(timeGone);
+            if ((timeWas = day.getTimeWorked()) != null) chipWas.setText(timeWas);
+            deleteBtn.setOnClickListener(v -> viewModel.deleteDay(day));
         }
     }
 }

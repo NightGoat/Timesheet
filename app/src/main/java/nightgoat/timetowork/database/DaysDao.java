@@ -17,6 +17,9 @@ import io.reactivex.Maybe;
 public interface DaysDao {
 
     @Query("SELECT * FROM days WHERE worked_time IS NOT NULL ORDER BY date")
+    Flowable<List<DayEntity>> getAllDaysNonNullWorkedTime();
+
+    @Query("SELECT * FROM days ORDER BY date")
     Flowable<List<DayEntity>> getAllDays();
 
     @Query("SELECT * FROM days WHERE date = :date")
@@ -33,4 +36,7 @@ public interface DaysDao {
 
     @Query("DELETE FROM days WHERE time_come is NULL AND time_gone is NULL")
     Completable deleteDaysWithoutTime();
+
+    @Query("DELETE FROM days")
+    Completable deleteEverything();
 }

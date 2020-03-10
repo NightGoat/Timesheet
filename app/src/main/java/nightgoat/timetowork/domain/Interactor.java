@@ -5,7 +5,6 @@ import java.util.List;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import nightgoat.timetowork.database.DayEntity;
 
@@ -39,5 +38,9 @@ public class Interactor {
 
     public Completable deleteDay(DayEntity dayEntity){
         return daysDataSource.deleteDay(dayEntity).subscribeOn(Schedulers.io());
+    }
+
+    public Completable deleteEverything() {
+        return daysDataSource.deleteEverything().subscribeOn(Schedulers.io());
     }
 }

@@ -41,4 +41,9 @@ public class DaysSourceRepImpl implements DaysDataSourceRep {
     public Completable deleteDay(DayEntity dayEntity) {
         return daysDao.deleteDay(dayEntity);
     }
+
+    @Override
+    public Completable deleteEverything() {
+        return daysDao.deleteEverything();
+    }
 }
