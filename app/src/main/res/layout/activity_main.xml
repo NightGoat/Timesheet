@@ -4,16 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.mainActivity.MainActivity">
+    tools:context=".presentation.main.MainActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        style="@style/Widget.MaterialComponents.Toolbar.Surface">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"/>
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <ImageButton
         android:id="@+id/left_btn"
@@ -22,10 +30,13 @@
         android:src="@drawable/ic_keyboard_arrow_left"
         android:scaleType="fitCenter"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
         android:layout_margin="8dp"
         style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-        android:contentDescription="@string/day_before"/>
+        android:contentDescription="@string/day_before"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackgroundBorderless"/>
 
     <TextView
         android:id="@+id/day_text"
@@ -37,13 +48,11 @@
         app:layout_constraintEnd_toStartOf="@id/right_btn"
         tools:text="01.01.1991"
         android:textSize="32sp"
-        style="@style/Widget.MaterialComponents.TextView"
-        android:background="@drawable/border"
+        android:background="@drawable/ripple"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:textColor="@android:color/white"/>
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"/>
 
     <ImageButton
         android:id="@+id/right_btn"
@@ -56,6 +65,9 @@
         android:layout_marginEnd="8dp"
         style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
         android:contentDescription="@string/day_after"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
          />
 
     <TextView
@@ -68,7 +80,7 @@
         android:layout_margin="16dp"
         android:textSize="20sp"
         android:paddingTop="5dp"
-        android:paddingBottom="5dp"/>
+        android:paddingBottom="5dp" />
 
     <TextView
         android:id="@+id/come_today_TV"
@@ -82,10 +94,10 @@
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
         android:textSize="20sp"
-        android:background="@drawable/border"
         android:gravity="center"
-        android:textColor="@android:color/white"
-        />
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@drawable/ripple"/>
 
     <TextView
         android:id="@+id/gone_today"
@@ -110,9 +122,10 @@
         android:textSize="20sp"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
-        android:background="@drawable/border"
+        android:background="@drawable/ripple"
         android:gravity="center"
-        android:textColor="@android:color/white"
+        android:clickable="true"
+        android:focusable="true"
         />
 
     <TextView
@@ -138,14 +151,16 @@
         android:layout_height="wrap_content"
         tools:text="Никаких путешествий во времени!"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:textSize="20sp"
         android:paddingStart="25dp"
         android:paddingEnd="5dp"/>
 
     </FrameLayout>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_come"
-        style="@style/Widget.MaterialComponents.Button"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="0dp"
         android:layout_height="64dp"
         android:text="@string/come"
@@ -153,17 +168,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/button_gone"
         app:layout_constraintHorizontal_chainStyle="packed"
-        android:layout_margin="4dp"/>
+        android:layout_marginStart="4dp"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_gone"
-        style="@style/Widget.MaterialComponents.Button"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="0dp"
         android:layout_height="64dp"
         android:text="@string/gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/button_come"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="4dp"/>
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:textColor="@color/colorAccent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

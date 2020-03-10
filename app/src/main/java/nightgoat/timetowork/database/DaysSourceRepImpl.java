@@ -5,22 +5,21 @@ import java.util.List;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
-import nightgoat.timetowork.DaysDataSource;
+import nightgoat.timetowork.domain.DaysDataSourceRep;
 
-public class DaysSource implements DaysDataSource {
+public class DaysSourceRepImpl implements DaysDataSourceRep {
 
-    private static final String TAG = DaysSource.class.getName();
+    private static final String TAG = DaysSourceRepImpl.class.getName();
 
     private final DaysDao daysDao;
 
-    public DaysSource(DaysDao daysDao){
+    public DaysSourceRepImpl(DaysDao daysDao) {
         this.daysDao = daysDao;
     }
 
-    public Flowable<List<DayEntity>> getAllDays(){
+    public Flowable<List<DayEntity>> getAllDays() {
         return daysDao.getAllDays();
     }
-
 
     public Completable addDay(DayEntity model) {
         return daysDao.insertDay(model);
@@ -34,7 +33,12 @@ public class DaysSource implements DaysDataSource {
         return daysDao.getDayByDate(date);
     }
 
-    public Completable deleteDaysWithoutTime(){
+    public Completable deleteDaysWithoutTime() {
         return daysDao.deleteDaysWithoutTime();
+    }
+
+    @Override
+    public Completable deleteDay(DayEntity dayEntity) {
+        return daysDao.deleteDay(dayEntity);
     }
 }
