@@ -28,9 +28,16 @@ import java.io.File;
 import java.util.Locale;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import nightgoat.timetowork.App;
 import nightgoat.timetowork.BuildConfig;
-import nightgoat.timetowork.Injection;
+import nightgoat.timetowork.IResourceHolder;
 import nightgoat.timetowork.R;
+import nightgoat.timetowork.di.AppComponent;
+import nightgoat.timetowork.di.DaggerAcitivityComponent;
+import nightgoat.timetowork.di.InteractorModule;
+import nightgoat.timetowork.domain.Interactor;
 import nightgoat.timetowork.presentation.ViewModelFactory;
 
 public class SettingsActivity extends AppCompatActivity implements ISnackBarMaker {
@@ -46,6 +53,11 @@ public class SettingsActivity extends AppCompatActivity implements ISnackBarMake
 
     private final String TAG = SettingsActivity.class.getName();
 
+    @Inject
+    Interactor interactor;
+
+    @Inject
+    IResourceHolder resourceHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,7 +142,13 @@ public class SettingsActivity extends AppCompatActivity implements ISnackBarMake
     }
 
     private void initViewModel() {
-        ViewModelFactory mViewModelFactory = Injection.provideViewModelFactory(getApplicationContext());
+        AppComponent component = ((App)getApplication()).getAppComponent();
+        DaggerAcitivityComponent.builder()
+                .appComponent(component)
+                .interactorModule(new InteractorModule())
+                .build()
+                .inject(this);
+        ViewModelFactory mViewModelFactory = new ViewModelFactory(interactor, resourceHolder);
         mViewModel = new ViewModelProvider(this, mViewModelFactory).get(SettingsViewModel.class);
         getLifecycle().addObserver(mViewModel);
         mViewModel.setSnackBarMaker(this);

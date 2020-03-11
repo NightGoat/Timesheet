@@ -5,15 +5,15 @@ import java.util.List;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
-import nightgoat.timetowork.domain.DaysDataSourceRep;
+import nightgoat.timetowork.domain.DaysRepository;
 
-public class DaysSourceRepImpl implements DaysDataSourceRep {
+public class DaysRepositoryImpl implements DaysRepository {
 
-    private static final String TAG = DaysSourceRepImpl.class.getName();
+    private static final String TAG = DaysRepositoryImpl.class.getName();
 
     private final DaysDao daysDao;
 
-    public DaysSourceRepImpl(DaysDao daysDao) {
+    public DaysRepositoryImpl(DaysDao daysDao) {
         this.daysDao = daysDao;
     }
 

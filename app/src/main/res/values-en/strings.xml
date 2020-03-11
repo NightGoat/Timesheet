@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Time to work</string>
+    <string name="day_before">Day before</string>
+    <string name="day_after">Next day</string>
+    <string name="action_list">List of days</string>
+    <string name="action_settings">Settings</string>
+    <string name="search">Search</string>
+    <string name="delete">Delete</string>
+    <string name="saveToExcel">Save database to Excel</string>
+    <string name="cleanDB">Clear database</string>
+    <string name="openExcel">Open saved Excel file</string>
+    <string name="today">Today</string>
+    <string name="needToBeOnWorkTime">Length of the working day</string>
+</resources>

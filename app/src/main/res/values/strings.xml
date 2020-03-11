@@ -1,29 +1,14 @@
 <resources>
     <string name="app_name">Time to work</string>
-    <string name="come">Пришел</string>
-    <string name="gone">Ушел</string>
     <string name="day_before">Предыдущий день</string>
     <string name="day_after">Следующий день</string>
-    <string name="spentTimeToday">Был на работе</string>
-    <string name="action_list">Список</string>
+    <string name="action_list">Список дней</string>
     <string name="action_settings">Настройки</string>
     <string name="search">Поиск</string>
     <string name="delete">Удалить</string>
-    <string name="needToBeOnWorkTime">Длина рабочего дня:</string>
     <string name="saveToExcel">Сохранить базу данных в Excel</string>
     <string name="cleanDB">Очистить базу данных</string>
     <string name="openExcel">Открыть сохраненный excel файл</string>
-    <string name="сan_go_home_at">Можно уйти</string>
     <string name="today">Сегодня</string>
-
-    <!--    Дни недели-->
-    <string name="monday">Понедельник</string>
-    <string name="tuesday">Вторник</string>
-    <string name="wednesday">Среда</string>
-    <string name="thursday">Четверг</string>
-    <string name="friday">Пятница</string>
-    <string name="saturday">Суббота</string>
-    <string name="sunday">Воскресение</string>
-    <string name="day_of_week">День недели</string>
-
+    <string name="needToBeOnWorkTime">Длина рабочего дня</string>
 </resources>

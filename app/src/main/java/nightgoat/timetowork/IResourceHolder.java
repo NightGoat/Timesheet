@@ -1,7 +1,5 @@
 package nightgoat.timetowork;
 
-import android.app.DatePickerDialog;
-
 import com.ajts.androidmads.library.SQLiteToExcel;
 
 public interface IResourceHolder {

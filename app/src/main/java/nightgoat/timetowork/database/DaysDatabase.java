@@ -10,8 +10,7 @@ import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 
-@Database(
-        entities = {DayEntity.class},
+@Database(entities = {DayEntity.class},
         version = 2,
         exportSchema = false)
 public abstract class DaysDatabase extends RoomDatabase {

@@ -18,9 +18,16 @@ import android.widget.EditText;
 
 import java.util.List;
 
-import nightgoat.timetowork.Injection;
+import javax.inject.Inject;
+
+import nightgoat.timetowork.App;
+import nightgoat.timetowork.IResourceHolder;
 import nightgoat.timetowork.R;
 import nightgoat.timetowork.database.DayEntity;
+import nightgoat.timetowork.di.AppComponent;
+import nightgoat.timetowork.di.DaggerAcitivityComponent;
+import nightgoat.timetowork.di.InteractorModule;
+import nightgoat.timetowork.domain.Interactor;
 import nightgoat.timetowork.presentation.ViewModelFactory;
 import nightgoat.timetowork.presentation.settings.SettingsActivity;
 
@@ -35,6 +42,11 @@ public class ListActivity extends AppCompatActivity {
     private ListViewAdapter adapter;
     private final String TAG = ListActivity.class.getName();
 
+    @Inject
+    Interactor interactor;
+
+    @Inject
+    IResourceHolder resourceHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,14 +77,20 @@ public class ListActivity extends AppCompatActivity {
     }
 
     private void initToolbar() {
-        toolbar.setTitle("База данных");
+        toolbar.setTitle(getString(R.string.action_list));
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left);
         toolbar.setNavigationOnClickListener(v -> finish());
     }
 
     private void initViewModel() {
-        mViewModelFactory = Injection.provideViewModelFactory(getApplicationContext());
+        AppComponent component = ((App)getApplication()).getAppComponent();
+        DaggerAcitivityComponent.builder()
+                .appComponent(component)
+                .interactorModule(new InteractorModule())
+                .build()
+                .inject(this);
+        ViewModelFactory mViewModelFactory = new ViewModelFactory(interactor, resourceHolder);
         mViewModel = new ViewModelProvider(this, mViewModelFactory).get(ListViewModel.class);
         getLifecycle().addObserver(mViewModel);
         mViewModel.daysLD.observe(this, data -> adapter.changeList(data));

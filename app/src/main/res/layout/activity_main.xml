@@ -57,7 +57,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:focusable="false"
-                android:hint="@string/day_of_week"
                 app:endIconDrawable="@drawable/ic_launcher_background"
                 app:hintTextAppearance="@style/TextLabel"
                 app:layout_constraintEnd_toStartOf="@id/right_btn"
@@ -153,15 +152,14 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/wasOnWorkTIL"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:focusable="false"
                 app:hintTextAppearance="@style/TextLabel"
                 app:layout_constraintStart_toStartOf="@id/comeTIL"
                 app:layout_constraintTop_toBottomOf="@id/comeTIL"
+                app:layout_constraintEnd_toStartOf="@id/leftTimeTIL"
                 app:startIconDrawable="@drawable/ic_hourglass_empty">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -171,10 +169,34 @@
                     android:focusable="false"
                     android:textColor="@color/colorGrey"
                     android:textSize="32sp"
-                    tools:text="22:22" />
+                    tools:text="6:30" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/leftTimeTIL"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:focusable="false"
+                app:hintTextAppearance="@style/TextLabel"
+                app:layout_constraintTop_toTopOf="@id/wasOnWorkTIL"
+                app:layout_constraintStart_toEndOf="@id/wasOnWorkTIL"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:startIconDrawable="@drawable/ic_hourglass_ful">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/leftTimeET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="32sp"
+                    tools:text="-2:10" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -190,24 +212,28 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_come"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="0dp"
             android:layout_height="64dp"
             android:layout_marginStart="4dp"
             android:layout_weight="1"
-            android:text="@string/come"
+            app:icon="@drawable/ic_arrow_downward"
+            app:iconPadding="0dp"
+            app:iconGravity="textStart"
             android:textSize="20sp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_gone"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="0dp"
             android:layout_height="64dp"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
             android:layout_weight="1"
-            android:text="@string/gone"
-            android:textColor="@color/colorAccent"
+            app:icon="@drawable/ic_arrow_upward"
+            app:iconPadding="0dp"
+            app:iconGravity="textStart"
+            android:backgroundTint="@color/colorAccent"
             android:textSize="20sp" />
     </LinearLayout>
 

@@ -1,7 +1,5 @@
 package nightgoat.timetowork.presentation.main;
 
-import android.app.DatePickerDialog;
-import android.icu.util.TimeZone;
 import android.util.Log;
 
 import androidx.lifecycle.Lifecycle;
@@ -14,9 +12,7 @@ import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
-import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -45,6 +41,7 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
     MutableLiveData<String> timeGoneLD = new MutableLiveData<>();
     MutableLiveData<String> dateLD = new MutableLiveData<>();
     MutableLiveData<String> timeDifferenceLD = new MutableLiveData<>();
+    MutableLiveData<String> timeLeftToWorkTodayLD = new MutableLiveData<>();
     MutableLiveData<String> dayOfWeek = new MutableLiveData<>();
     MutableLiveData<Integer> dayLD = new MutableLiveData<>();
     MutableLiveData<Integer> monthLD = new MutableLiveData<>();
@@ -59,15 +56,16 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
     private String timeCome;
     private String timeGone;
     private String timeCanGoHomeAt;
-    private IResourceHolder resourceHolder;
     private String currentTime = TimeUtils.getCurrentTime();
+    private String timeNeedToWork;
+    private String timeDifference;
 
 
     private DayEntity dayEntity;
 
     public DaysViewModel(Interactor interactor, IResourceHolder resourceHolder) {
         this.interactor = interactor;
-        this.resourceHolder = resourceHolder;
+        timeNeedToWork = resourceHolder.getTimeNeedToWorkFromPreferences();
         calendar = Calendar.getInstance();
         mDisposable.add(Observable.interval(1, TimeUnit.MINUTES)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -228,7 +226,6 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
             Log.d(TAG, "counting difference for timeCome: " + timeCome + " and timeGone: " + timeGone);
             DateTime comeTimeDT = DateTime.parse(timeCome, formatter);
             DateTime goneTimeDT = DateTime.parse(timeGone, formatter);
-            String timeDifference;
             if (goneTimeDT.isAfter(comeTimeDT)) {
                 timeDifference = formatter.print(new Duration(comeTimeDT, goneTimeDT).getMillis());
                 timeDifferenceLD.setValue(timeDifference);
@@ -244,16 +241,31 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
         } else if (timeCome != null){
             DateTime comeTimeDT = DateTime.parse(timeCome, formatter);
             DateTime nowTimeDT = DateTime.parse(currentTime, formatter);
-            if (nowTimeDT.isAfter(comeTimeDT)) timeDifferenceLD.setValue(formatter.print(new Duration(comeTimeDT, nowTimeDT).getMillis()));
-            else timeDifferenceLD.setValue("00:00");
+            if (nowTimeDT.isAfter(comeTimeDT)) {
+                timeDifference = formatter.print(new Duration(comeTimeDT, nowTimeDT).getMillis());
+                timeDifferenceLD.setValue(timeDifference);
+            }
+            else {
+                timeDifference = null;
+                timeDifferenceLD.setValue("00:00");
+            }
         } else {
             Log.e(TAG, "ERROR counting difference because timeCome is: " + timeCome + " and timeGone is: " + timeGone);
             timeDifferenceLD.setValue("00:00");
+            timeDifference = null;
+        }
+        countTimeLeftToWorkToday();
+    }
+
+    private void countTimeLeftToWorkToday(){
+        if (timeDifference != null) {
+            timeLeftToWorkTodayLD.postValue(TimeUtils.countTimeDiff(timeNeedToWork, timeDifference));
+        } else {
+            timeLeftToWorkTodayLD.postValue("00:00");
         }
     }
 
     private void countTimeCanGoHome(){
-        String timeNeedToWork = resourceHolder.getTimeNeedToWorkFromPreferences();
         Logger.d(" countTimeCanGoHome() timeCome: %s timeGone: %s timeCanGoHomeAt: %s", timeCome, timeGone, timeCanGoHomeAt);
         if (timeCome != null && timeGone == null) {
             timeCanGoHomeAt = TimeUtils.countTimeSum(timeCome, timeNeedToWork);

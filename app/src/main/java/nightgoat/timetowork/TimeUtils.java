@@ -91,4 +91,26 @@ public class TimeUtils {
         DateTime sqlDateTime = sqlFormat.parseDateTime(sqlDate);
         return StringUtils.capitalize(sqlDateTime.dayOfWeek().getAsText(Locale.getDefault()));
     }
+
+    public static String countTimeDiff(String time1, String time2){
+        PeriodFormatter formatter = new PeriodFormatterBuilder()
+                .minimumPrintedDigits(2)
+                .printZeroAlways()
+                .appendHours()
+                .appendLiteral(":")
+                .appendMinutes()
+                .toFormatter();
+        Period period1 = formatter.parsePeriod(time1);
+        Period period2 = formatter.parsePeriod(time2);
+        Period period3 = period1.minus(period2);
+        if (period3.getMinutes() >= 60){
+            period3 = period3.plusHours(1).minusMinutes(60);
+        }
+        if (period3.getHours() >= 24) {
+            period3 = period3.minusHours(24);
+        }
+        String result = formatter.print(period3);
+        Log.d("TimeUtils", "countTimeDiff: result: " + result);
+        return result;
+    }
 }

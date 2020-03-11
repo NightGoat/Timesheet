@@ -7,7 +7,7 @@ import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import nightgoat.timetowork.database.DayEntity;
 
-public interface DaysDataSourceRep {
+public interface DaysRepository {
 
     Flowable<List<DayEntity>> getAllDays();
 

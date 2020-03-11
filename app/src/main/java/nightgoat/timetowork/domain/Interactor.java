@@ -10,9 +10,9 @@ import nightgoat.timetowork.database.DayEntity;
 
 public class Interactor {
 
-    private DaysDataSourceRep daysDataSource;
+    private DaysRepository daysDataSource;
 
-    public Interactor(DaysDataSourceRep daysDataSource) {
+    public Interactor(DaysRepository daysDataSource) {
         this.daysDataSource = daysDataSource;
     }
 

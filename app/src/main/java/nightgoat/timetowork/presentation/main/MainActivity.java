@@ -3,7 +3,6 @@ package nightgoat.timetowork.presentation.main;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.MotionEventCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.DatePickerDialog;
@@ -16,30 +15,41 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.chip.Chip;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Locale;
 
-import nightgoat.timetowork.Injection;
+import javax.inject.Inject;
+
+import nightgoat.timetowork.App;
+import nightgoat.timetowork.IResourceHolder;
 import nightgoat.timetowork.R;
 import nightgoat.timetowork.TimeUtils;
+import nightgoat.timetowork.di.AppComponent;
+import nightgoat.timetowork.di.DaggerAcitivityComponent;
+import nightgoat.timetowork.di.InteractorModule;
+import nightgoat.timetowork.domain.Interactor;
 import nightgoat.timetowork.presentation.list.ListActivity;
 import nightgoat.timetowork.presentation.ViewModelFactory;
 import nightgoat.timetowork.presentation.settings.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
+
+    @Inject
+    Interactor interactor;
+    @Inject
+    IResourceHolder resourceHolder;
+
     private ImageButton leftArrowIB, rightArrowIB;
     private MaterialButton comeBtn, goneBtn;
     private DaysViewModel mViewModel;
     private Toolbar toolbar;
     private GestureDetector gestureDetector;
-    private TextInputEditText comeET, goneET, wasOnWorkET, dayET;
-    private TextInputLayout comeTIL, goneTIL, dayTIL;
+    private TextInputEditText comeET, goneET, wasOnWorkET, dayET, timeLeftToWorkET;
+    private TextInputLayout dayTIL, goneTIL, comeTIL;
     private Integer day, month, year;
 
     private static final String TAG = MainActivity.class.getName();
@@ -64,14 +74,22 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         mViewModel.dayOfWeek.observe(this, data -> dayTIL.setHint(data));
         //Был на работе
         mViewModel.timeDifferenceLD.observe(this, data -> wasOnWorkET.setText(data));
+        //Осталось работать
+        mViewModel.timeLeftToWorkTodayLD.observe(this, data -> timeLeftToWorkET.setText(data));
         //День, месяц, год для DatePickerDialog
         mViewModel.dayLD.observe(this, data -> day = data);
         mViewModel.monthLD.observe(this, data -> month = data - 1);
         mViewModel.yearLD.observe(this, data -> year = data);
         mViewModel.isGoneTimeExistLD.observe(this, isGoneTimeExist -> {
             goneTIL.setEndIconVisible(isGoneTimeExist);
-            if (isGoneTimeExist) goneET.setTextColor(getResources().getColor(R.color.colorAccent));
-            else goneET.setTextColor(getResources().getColor(R.color.colorGrey));
+            if (isGoneTimeExist) {
+                goneET.setTextColor(getResources().getColor(R.color.colorAccent));
+                wasOnWorkET.setTextColor(getResources().getColor(R.color.colorPrimary));
+            }
+            else {
+                goneET.setTextColor(getResources().getColor(R.color.colorLightGrey));
+                wasOnWorkET.setTextColor(getResources().getColor(R.color.colorLightGrey));
+            }
         });
 
         initLeftArrowClickListener();
@@ -100,18 +118,25 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         dayTIL = findViewById(R.id.dayTIL);
         wasOnWorkET = findViewById(R.id.wasOnWorkET);
         wasOnWorkET.setEnabled(false);
+        comeTIL = findViewById(R.id.comeTIL);
+        goneTIL = findViewById(R.id.goneTIL);
         comeET = findViewById(R.id.comeET);
         goneET = findViewById(R.id.goneET);
         comeBtn = findViewById(R.id.button_come);
         goneBtn = findViewById(R.id.button_gone);
         toolbar = findViewById(R.id.toolbar);
-        comeTIL = findViewById(R.id.comeTIL);
-        goneTIL = findViewById(R.id.goneTIL);
+        timeLeftToWorkET = findViewById(R.id.leftTimeET);
     }
 
     private void initViewModel() {
-        ViewModelFactory mViewModelFactory = Injection.provideViewModelFactory(getApplicationContext());
-        mViewModel = new ViewModelProvider(this, mViewModelFactory).get(DaysViewModel.class);
+        AppComponent component = ((App)getApplication()).getAppComponent();
+        DaggerAcitivityComponent.builder()
+                .appComponent(component)
+                .interactorModule(new InteractorModule())
+                .build()
+                .inject(this);
+
+        mViewModel = new ViewModelProvider(this, new ViewModelFactory(interactor, resourceHolder)).get(DaysViewModel.class);
         getLifecycle().addObserver(mViewModel);
     }
 

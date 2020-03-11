@@ -1,13 +1,11 @@
 package nightgoat.timetowork;
 
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 
 import com.ajts.androidmads.library.SQLiteToExcel;
 
-import java.util.Locale;
 import java.util.Objects;
 
 public class ResourceHolder implements IResourceHolder {
@@ -15,7 +13,7 @@ public class ResourceHolder implements IResourceHolder {
     private Context context;
     private SharedPreferences sharedPreferences;
 
-    ResourceHolder(Context context){
+    public ResourceHolder(Context context){
         this.context = context;
         sharedPreferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
     }
