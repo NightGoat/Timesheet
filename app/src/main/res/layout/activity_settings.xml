@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/settings_activity_toolbar"
+            android:id="@+id/settings_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:layout_constraintStart_toStartOf="parent"

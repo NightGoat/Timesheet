@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Time to work</string>
+    <string name="app_name" translatable="false">TimeSheet</string>
     <string name="day_before">Предыдущий день</string>
     <string name="day_after">Следующий день</string>
     <string name="action_list">Список дней</string>
@@ -11,4 +11,10 @@
     <string name="openExcel">Открыть сохраненный excel файл</string>
     <string name="today">Сегодня</string>
     <string name="needToBeOnWorkTime">Длина рабочего дня</string>
+    <string name="noExcelApp">Пожалуйста, установите программу для открытия excel файлов</string>
+    <string name="deleteDB">Это действие приведет к удалению всех записей, вы уверены?</string>
+    <string name="yes">Да</string>
+    <string name="cancel">Отмена</string>
+    <string name="open">Открыть</string>
+    <string name="saved">Успешно сохранено в: </string>
 </resources>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Time to work</string>
     <string name="day_before">Day before</string>
     <string name="day_after">Next day</string>
     <string name="action_list">List of days</string>
@@ -12,4 +11,10 @@
     <string name="openExcel">Open saved Excel file</string>
     <string name="today">Today</string>
     <string name="needToBeOnWorkTime">Length of the working day</string>
+    <string name="noExcelApp">Please install excel app first</string>
+    <string name="deleteDB">All data will be deleted, are you sure?</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
+    <string name="open">Open</string>
+    <string name="saved">Successfully saved in: </string>
 </resources>
