@@ -57,13 +57,12 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
     private String currentTime = TimeUtils.getCurrentTime();
     private String timeNeedToWork;
     private String timeDifference;
-
-
     private DayEntity dayEntity;
+    private IResourceHolder resourceHolder;
 
     public DaysViewModel(Interactor interactor, IResourceHolder resourceHolder) {
         this.interactor = interactor;
-        timeNeedToWork = resourceHolder.getTimeNeedToWorkFromPreferences();
+        this.resourceHolder = resourceHolder;
         calendar = Calendar.getInstance();
         mDisposable.add(Observable.interval(1, TimeUnit.MINUTES)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -75,12 +74,12 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     void onStart() {
+        Logger.addLogAdapter(new AndroidLogAdapter());
         Log.d("DaysViewModel", "onStart: ");
         getDate();
         getDayEntity(date);
-        Logger.addLogAdapter(new AndroidLogAdapter());
+        timeNeedToWork = resourceHolder.getTimeNeedToWorkFromPreferences();
     }
-
 
     void setPreviousDay() {
         calendar.add(Calendar.DAY_OF_MONTH, -1);

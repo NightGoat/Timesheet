@@ -58,7 +58,6 @@ public class SettingsActivity extends AppCompatActivity implements ISnackBarMake
         initToolbar();
         initNeedToBeOnWorkListener();
         initCleanDBListener();
-
         mViewModel.isOpenExcelFileBtnEnabled.observe(this, aBoolean -> binding.settingsOpenExcelBtn.setEnabled(aBoolean));
         mViewModel.isProgressBarVisible.observe(this, aBoolean -> {
             if (aBoolean) binding.settingsProgressBar.setVisibility(View.VISIBLE);
