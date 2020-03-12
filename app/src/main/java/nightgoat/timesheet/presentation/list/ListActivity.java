@@ -31,7 +31,7 @@ public class ListActivity extends AppCompatActivity implements ActivityForResult
 
     private ActivityListBinding binding;
     private ListViewModel mViewModel;
-    private ListViewAdapter adapter;
+    private ListAdapter adapter;
     private final String TAG = ListActivity.class.getName();
 
     @Inject
@@ -88,7 +88,7 @@ public class ListActivity extends AppCompatActivity implements ActivityForResult
     private void initList() {
         Log.d(TAG, "initList()");
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        adapter = new ListViewAdapter(mViewModel, this);
+        adapter = new ListAdapter(mViewModel, this);
         binding.listActivityRecyclerView.setLayoutManager(layoutManager);
         binding.listActivityRecyclerView.setAdapter(adapter);
     }

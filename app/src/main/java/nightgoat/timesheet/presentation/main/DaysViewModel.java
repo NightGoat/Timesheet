@@ -1,5 +1,6 @@
 package nightgoat.timesheet.presentation.main;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import androidx.lifecycle.Lifecycle;
@@ -24,8 +25,6 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.observers.DisposableCompletableObserver;
-import io.reactivex.observers.DisposableMaybeObserver;
 import nightgoat.timesheet.IResourceHolder;
 import nightgoat.timesheet.TimeUtils;
 import nightgoat.timesheet.database.DayEntity;
@@ -45,6 +44,7 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
     MutableLiveData<Integer> monthLD = new MutableLiveData<>();
     MutableLiveData<Integer> yearLD = new MutableLiveData<>();
     MutableLiveData<Boolean> isGoneTimeExistLD = new MutableLiveData<>();
+    MutableLiveData<String> workedHoursSumLD = new MutableLiveData<>();
     private final CompositeDisposable mDisposable = new CompositeDisposable();
 
     private List<DayEntity> days;
@@ -53,7 +53,6 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
     private String date;
     private String timeCome;
     private String timeGone;
-    private String timeCanGoHomeAt;
     private String currentTime = TimeUtils.getCurrentTime();
     private String timeNeedToWork;
     private String timeDifference;
@@ -77,8 +76,39 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
         Logger.addLogAdapter(new AndroidLogAdapter());
         Log.d("DaysViewModel", "onStart: ");
         getDate();
-        getDayEntity(date);
         timeNeedToWork = resourceHolder.getTimeNeedToWorkFromPreferences();
+        mDisposable.add(
+                interactor.getAllDays()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(dayEntities -> {
+                            days = dayEntities;
+                            getDayEntity(date);
+
+                        }, throwable -> Log.d("DaysViewModel", "onStart: error with list: " + throwable.getMessage())));
+    }
+
+    void getDayEntity(String date) {
+        this.date = date;
+        Log.d("DaysViewModel", "getDayEntity: date: " + date);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+        DateTime dt = dateTimeFormatter.parseDateTime(date);
+        calendar.setTime(dt.toDate());
+        dayEntity = new DayEntity(date);
+        if (days.contains(dayEntity)) {
+            for (DayEntity day : days) {
+                if (day.equals(dayEntity)) dayEntity = day;
+            }
+        } else addDay();
+        timeCome = dayEntity.getTimeCome();
+        timeGone = dayEntity.getTimeGone();
+        timeDifference = dayEntity.getTimeWorked();
+        Log.d("DaysViewModel", "DayEntity timeCome: " + timeCome + " timeGone: " + timeGone + " timeDifference: " + timeDifference);
+        timeComeLD.postValue(timeCome);
+        timeGoneLD.postValue(timeGone);
+        countComeGoneDifference();
+        countTimeCanGoHome();
+        dateLD.postValue(TimeUtils.getDateInNormalFormat(date));
+        dayOfWeek.postValue(TimeUtils.getDayOfTheWeek(date));
     }
 
     void setPreviousDay() {
@@ -94,119 +124,50 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
     }
 
     void setComeTime(String time) {
-        timeCome = time;
-        dayEntity.setTimeCome(timeCome);
+        dayEntity.setTimeCome(time);
         mDisposable.add(
                 interactor.updateDay(dayEntity)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableCompletableObserver() {
-                            @Override
-                            public void onComplete() {
-                                timeComeLD.setValue(timeCome);
-                                countComeGoneDifference();
-                                countTimeCanGoHome();
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Log.e(TAG, "setComeTime Error: " + e);
-                            }
-                        }));
+                        .subscribe());
     }
 
     void setGoneTime(String time) {
-        this.timeGone = time;
-        dayEntity.setTimeGone(timeGone);
+        dayEntity.setTimeGone(time);
         mDisposable.add(
                 interactor.updateDay(dayEntity)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableCompletableObserver() {
-                            @Override
-                            public void onComplete() {
-                                timeGoneLD.setValue(timeGone);
-                                countComeGoneDifference();
-                            }
-                            @Override
-                            public void onError(Throwable e) {
-                                Log.e(TAG, "setGoneTime Error: " + e);
-                            }
-                        }));
-        countTimeCanGoHome();
+                        .subscribe());
     }
 
-    void getDayEntity(String date) {
-        this.date = date;
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy.MM.dd");
-        DateTime dt = dateTimeFormatter.parseDateTime(date);
-        calendar.setTime(dt.toDate());
-        mDisposable.add(interactor.getDayByDayModel(date)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableMaybeObserver<DayEntity>() {
-                                   @Override
-                                   public void onSuccess(DayEntity day) {
-                                       Log.w(TAG, "Found dayEntity for: " + day.getDate());
-                                       dayEntity = day;
-                                       timeCome = dayEntity.getTimeCome();
-                                       timeGone = dayEntity.getTimeGone();
-                                       timeComeLD.setValue(timeCome);
-                                       timeGoneLD.setValue(timeGone);
-                                       countComeGoneDifference();
-                                       countTimeCanGoHome();
-                                   }
-
-                                   @Override
-                                   public void onError(Throwable e) {
-                                       Log.e(TAG, "Error: " + e);
-                                       addDay();
-                                       timeCome = null;
-                                       timeGone = null;
-                                       timeComeLD.setValue(null);
-                                       timeGoneLD.setValue(null);
-                                       getDayEntity(date);
-                                   }
-
-                                   @Override
-                                   public void onComplete() {
-                                       Log.e(TAG, "Didnt found entity, adding new one");
-                                       timeCome = null;
-                                       timeGone = null;
-                                       timeGoneLD.setValue(null);
-                                       timeComeLD.setValue(null);
-                                       addDay();
-                                   }
-                               }
-                ));
-        dateLD.setValue(TimeUtils.getDateInNormalFormat(date));
-        dayOfWeek.setValue(TimeUtils.getDayOfTheWeek(date));
-    }
 
     private void addDay() {
-        dayEntity = new DayEntity(date);
+        Log.d("DaysViewModel", "addDay: " + dayEntity.getDate());
         mDisposable.add(interactor.addDay(dayEntity)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableCompletableObserver() {
-                    @Override
-                    public void onComplete() {
-                        Log.e(TAG, "Added day");
-                        timeDifferenceLD.setValue("00:00");
-                        countTimeCanGoHome();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "Adding day completed with Error: " + e);
-                    }
-                }));
+                .subscribe(() -> Log.e(TAG, "Added day")));
     }
 
     private void getDate() {
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH) + 1;
         int year = calendar.get(Calendar.YEAR);
-        dayLD.setValue(day);
-        monthLD.setValue(month);
-        yearLD.setValue(year);
-        date = String.format(Locale.getDefault(), "%d.%02d.%02d", year, month, day);
+        getWorkedHoursSum(month, year);
+        dayLD.postValue(day);
+        monthLD.postValue(month);
+        yearLD.postValue(year);
+        date = String.format(Locale.getDefault(), "%d-%02d-%02d", year, month, day);
+    }
+
+    @SuppressLint("DefaultLocale")
+    private void getWorkedHoursSum(int month, int year) {
+        Log.d("DaysViewModel", "getWorkedHoursSum: " + String.format("%02d", month) + " " + year);
+        mDisposable.add(interactor.getWorkedHoursSum(String.format("%02d", month), String.valueOf(year))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(sum -> {
+                            Log.d("DaysViewModel", "getWorkedHoursSum: " + sum);
+                            workedHoursSumLD.setValue("Отработано в этом месяце: " + sum);
+                        },
+                        throwable -> Log.e("DaysViewModel", "getWorkedHoursSum: ERROR" + throwable.getMessage()),
+                        () -> Log.d("DaysViewModel", "getWorkedHoursSum: onComplete"),
+                        subscription -> Log.d("DaysViewModel", "getWorkedHoursSum: subscription" + subscription.toString())));
     }
 
     void deleteEmptyEntities() {
@@ -217,62 +178,42 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
     }
 
     private void countComeGoneDifference() {
-        Log.d("DaysViewModel", "countComeGoneDifference: ");
+        // Log.d("DaysViewModel", "countComeGoneDifference: ");
         DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm");
-        if (timeCome != null && timeGone != null) {
-            Log.d(TAG, "counting difference for timeCome: " + timeCome + " and timeGone: " + timeGone);
-            DateTime comeTimeDT = DateTime.parse(timeCome, formatter);
-            DateTime goneTimeDT = DateTime.parse(timeGone, formatter);
-            if (goneTimeDT.isAfter(comeTimeDT)) {
-                timeDifference = formatter.print(new Duration(comeTimeDT, goneTimeDT).getMillis());
-            } else {
-                timeDifference = null;
-            }
-            dayEntity.setTimeWorked(timeDifference);
-            mDisposable.add(
-                    interactor.updateDay(dayEntity)
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe());
-        } else if (timeCome != null){
+        if (timeCome != null && timeDifference == null) {
             DateTime comeTimeDT = DateTime.parse(timeCome, formatter);
             DateTime nowTimeDT = DateTime.parse(currentTime, formatter);
             if (nowTimeDT.isAfter(comeTimeDT)) {
                 timeDifference = formatter.print(new Duration(comeTimeDT, nowTimeDT).getMillis());
             }
-            else {
-                timeDifference = null;
-            }
-        } else {
-            Log.e(TAG, "ERROR counting difference because timeCome is: " + timeCome + " and timeGone is: " + timeGone);
-            timeDifference = null;
         }
-        timeDifferenceLD.setValue(timeDifference);
+        timeDifferenceLD.postValue(timeDifference);
         countTimeLeftToWorkToday();
     }
 
-    private void countTimeLeftToWorkToday(){
+    private void countTimeLeftToWorkToday() {
         if (timeDifference != null) {
             timeLeftToWorkTodayLD.postValue(TimeUtils.countTimeDiff(timeNeedToWork, timeDifference));
         } else {
-            timeLeftToWorkTodayLD.setValue(null);
+            timeLeftToWorkTodayLD.postValue(null);
         }
     }
 
-    private void countTimeCanGoHome(){
-        Logger.d(" countTimeCanGoHome() timeCome: %s timeGone: %s timeCanGoHomeAt: %s", timeCome, timeGone, timeCanGoHomeAt);
+    private void countTimeCanGoHome() {
+        // Logger.d(" countTimeCanGoHome() timeCome: %s timeGone: %s timeCanGoHomeAt: %s", timeCome, timeGone, timeCanGoHomeAt);
         if (timeCome != null && timeGone == null) {
-            timeCanGoHomeAt = TimeUtils.countTimeSum(timeCome, timeNeedToWork);
-            timeGoneLD.setValue(timeCanGoHomeAt);
-            isGoneTimeExistLD.setValue(false);
+            String timeCanGoHomeAt = TimeUtils.countTimeSum(timeCome, timeNeedToWork);
+            timeGoneLD.postValue(timeCanGoHomeAt);
+            isGoneTimeExistLD.postValue(false);
         } else if (timeCome != null) {
-            isGoneTimeExistLD.setValue(true);
+            isGoneTimeExistLD.postValue(true);
         } else if (timeGone != null) {
-            timeComeLD.setValue(null);
-            isGoneTimeExistLD.setValue(true);
+            timeComeLD.postValue(null);
+            isGoneTimeExistLD.postValue(true);
         } else {
-            timeGoneLD.setValue(null);
-            timeComeLD.setValue(null);
-            isGoneTimeExistLD.setValue(false);
+            timeGoneLD.postValue(null);
+            timeComeLD.postValue(null);
+            isGoneTimeExistLD.postValue(false);
         }
     }
 

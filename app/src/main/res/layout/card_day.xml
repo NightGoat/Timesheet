@@ -51,21 +51,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 card_view:chipIcon="@drawable/ic_arrow_downward"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+                card_view:closeIconEnabled="true"/>
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipGone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 card_view:chipIcon="@drawable/ic_arrow_upward"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+                card_view:closeIconEnabled="true"/>
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipWas"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 card_view:chipIcon="@drawable/ic_hourglass_empty"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+                card_view:rippleColor="@android:color/transparent"/>
 
         </com.google.android.material.chip.ChipGroup>
 

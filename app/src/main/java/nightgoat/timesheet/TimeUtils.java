@@ -4,12 +4,20 @@ import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
+import org.joda.time.Interval;
 import org.joda.time.Period;
+import org.joda.time.PeriodType;
+import org.joda.time.ReadablePeriod;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.PeriodFormat;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
+import org.joda.time.format.PeriodPrinter;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -51,8 +59,21 @@ public class TimeUtils {
     }
 
     public static String getCurrentDate(){
-        DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("yyyy.MM.dd");
+        DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
         return sqlFormat.print(System.currentTimeMillis());
+    }
+
+    public static String getDateInNormalFormat(String sqlDate){
+        DateTimeFormatter normalFormat = DateTimeFormat.forPattern("dd.MM.yyyy");
+        DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
+        DateTime sqlDateTime = sqlFormat.parseDateTime(sqlDate);
+        return normalFormat.print(sqlDateTime.getMillis());
+    }
+
+    public static String getDayOfTheWeek(String sqlDate){
+        DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
+        DateTime sqlDateTime = sqlFormat.parseDateTime(sqlDate);
+        return StringUtils.capitalize(sqlDateTime.dayOfWeek().getAsText(Locale.getDefault()));
     }
 
     public static String countTimeSum(String time1, String time2){
@@ -77,19 +98,6 @@ public class TimeUtils {
         return result;
     }
 
-    public static String getDateInNormalFormat(String sqlDate){
-        DateTimeFormatter normalFormat = DateTimeFormat.forPattern("dd.MM.yyyy");
-        DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("yyyy.MM.dd");
-        DateTime sqlDateTime = sqlFormat.parseDateTime(sqlDate);
-        return normalFormat.print(sqlDateTime.getMillis());
-    }
-
-    public static String getDayOfTheWeek(String sqlDate){
-        DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("yyyy.MM.dd");
-        DateTime sqlDateTime = sqlFormat.parseDateTime(sqlDate);
-        return StringUtils.capitalize(sqlDateTime.dayOfWeek().getAsText(Locale.getDefault()));
-    }
-
     public static String countTimeDiff(String time1, String time2){
         PeriodFormatter formatter = new PeriodFormatterBuilder()
                 .minimumPrintedDigits(2)
@@ -98,16 +106,14 @@ public class TimeUtils {
                 .appendLiteral(":")
                 .appendMinutes()
                 .toFormatter();
-        Period period1 = formatter.parsePeriod(time1);
-        Period period2 = formatter.parsePeriod(time2);
-        Period period3 = period1.minus(period2);
-        if (period3.getMinutes() >= 60){
-            period3 = period3.plusHours(1).minusMinutes(60);
+        DateTimeFormatter formatter2 = DateTimeFormat.forPattern("HH:mm");
+        DateTime time1DT = DateTime.parse(time1, formatter2);
+        DateTime time2DT = DateTime.parse(time2, formatter2);
+        Period period = new Period(time1DT, time2DT);
+        if (period.getMinutes() < 0) {
+            period = period.withMinutes(period.getMinutes()*-1);
         }
-        if (period3.getHours() >= 24) {
-            period3 = period3.minusHours(24);
-        }
-        String result = formatter.print(period3);
+        String result = formatter.print(period);
         Log.d("TimeUtils", "countTimeDiff: result: " + result);
         return result;
     }

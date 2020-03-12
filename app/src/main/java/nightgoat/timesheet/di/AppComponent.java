@@ -16,5 +16,5 @@ import nightgoat.timesheet.domain.DaysRepository;
 @Singleton
 public interface AppComponent {
     DaysRepository getRepository();
-    IResourceHolder getResoursceHolder();
+    IResourceHolder getResourceHolder();
 }

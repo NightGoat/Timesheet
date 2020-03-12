@@ -14,6 +14,7 @@ import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -76,12 +77,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             if (isGoneTimeExist) {
                 binding.goneET.setTextColor(getResources().getColor(R.color.colorAccent));
                 binding.wasOnWorkET.setTextColor(getResources().getColor(R.color.colorPrimary));
-            }
-            else {
+            } else {
                 binding.goneET.setTextColor(getResources().getColor(R.color.colorLightGrey));
                 binding.wasOnWorkET.setTextColor(getResources().getColor(R.color.colorLightGrey));
             }
         });
+        mViewModel.workedHoursSumLD.observe(this, data -> binding.workedHoursSum.setText(data));
 
         initLeftArrowClickListener();
         initRightArrowClickListener();
@@ -103,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     private void initViewModel() {
-        AppComponent component = ((App)getApplication()).getAppComponent();
+        AppComponent component = ((App) getApplication()).getAppComponent();
         DaggerAcitivityComponent.builder()
                 .appComponent(component)
                 .interactorModule(new InteractorModule())
@@ -179,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         if (id == R.id.action_list) {
             goToListActivity();
             return true;
-        } else if(id == R.id.action_today) {
+        } else if (id == R.id.action_today) {
             mViewModel.getDayEntity(TimeUtils.getCurrentDate());
         } else goToSettingsActivity();
         return super.onOptionsItemSelected(item);
@@ -206,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event){
+    public boolean onTouchEvent(MotionEvent event) {
         if (this.gestureDetector.onTouchEvent(event)) {
             return true;
         }

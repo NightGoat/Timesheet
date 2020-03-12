@@ -22,4 +22,8 @@ public interface DaysRepository {
     Completable deleteDay(DayEntity model);
 
     Completable deleteEverything();
+
+    Flowable<List<DayEntity>> getDaysWorkedTimeNonNull(int month, int year);
+
+    Flowable<String> getWorkedHoursSum(String month, String year);
 }

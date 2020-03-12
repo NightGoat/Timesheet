@@ -28,7 +28,7 @@ public class Interactor {
         return daysDataSource.updateDay(model).subscribeOn(Schedulers.io());
     }
 
-    public Maybe<DayEntity> getDayByDayModel(String date) {
+    public Maybe<DayEntity> getDayEntityByDay(String date) {
         return daysDataSource.getDayByDayModel(date).subscribeOn(Schedulers.io());
     }
 
@@ -42,5 +42,9 @@ public class Interactor {
 
     public Completable deleteEverything() {
         return daysDataSource.deleteEverything().subscribeOn(Schedulers.io());
+    }
+
+    public Flowable<String> getWorkedHoursSum(String month, String year){
+        return daysDataSource.getWorkedHoursSum(month, year).subscribeOn(Schedulers.io());
     }
 }
