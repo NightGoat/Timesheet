@@ -9,7 +9,6 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +30,7 @@ import nightgoat.timesheet.domain.Interactor;
 import nightgoat.timesheet.presentation.list.ListActivity;
 import nightgoat.timesheet.presentation.ViewModelFactory;
 import nightgoat.timesheet.presentation.settings.SettingsActivity;
+import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
 
@@ -53,54 +53,63 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        setSupportActionBar(binding.toolbar);
+        setSupportActionBar(binding.activityMainToolbar);
         initViewModel();
         gestureDetector = new GestureDetector(this, this);
-        //Пришел:
-        mViewModel.timeComeLD.observe(this, data -> binding.comeET.setText(data));
-        //Ушел
-        mViewModel.timeGoneLD.observe(this, data -> binding.goneET.setText(data));
-        //Дата
-        mViewModel.dateLD.observe(this, data -> binding.dayET.setText(data));
-        //День недели
-        mViewModel.dayOfWeek.observe(this, data -> binding.dayTIL.setHint(data));
-        //Был на работе
-        mViewModel.timeDifferenceLD.observe(this, data -> binding.wasOnWorkET.setText(data));
-        //Осталось работать
-        mViewModel.timeLeftToWorkTodayLD.observe(this, data -> binding.leftTimeET.setText(data));
-        //День, месяц, год для DatePickerDialog
-        mViewModel.dayLD.observe(this, data -> day = data);
-        mViewModel.monthLD.observe(this, data -> month = data - 1);
-        mViewModel.yearLD.observe(this, data -> year = data);
-        mViewModel.isGoneTimeExistLD.observe(this, isGoneTimeExist -> {
-            binding.goneTIL.setEndIconVisible(isGoneTimeExist);
+        initViewModelObservations();
+        initPreviousDayBtnClickListener();
+        initNextDayBtnClickListener();
+        initCameBtnClickListener();
+        initGoneBtnClickListener();
+        initCameEditTextClickListener();
+        initGoneEditTextClickListener();
+        initDayEditTextClickListener();
+        initCameTextInputLayoutEndIconClickListener();
+        initGoneTextInputLayoutEndIconClickListener();
+    }
+
+    private void initViewModelObservations() {
+        mViewModel.timeCameLiveData.observe(this, data ->
+                binding.activityMainCameTextInputEditText.setText(data));                            //Пришел:
+        mViewModel.timeGoneLiveData.observe(this, data ->
+                binding.activityMainGoneTextInputEditText.setText(data));                            //Ушел
+        mViewModel.dateLiveData.observe(this, data ->
+                binding.activityMainDayTextInputEditText.setText(data));                             //Дата
+        mViewModel.dayOfWeekLiveData.observe(this, data ->
+                binding.activityMainDayTextInputLayout.setHint(data));                               //День недели
+        mViewModel.timeWasOnWorkLiveData.observe(this, data ->
+                binding.activityMainTimeWasOnWorkTextInputEditText.setText(data));                   //Был на работе
+        mViewModel.timeLeftToWorkTodayLiveData.observe(this, data ->
+                binding.activityMainTimeLeftToWorkTextInputEditText.setText(data));                  //Осталось работать
+        mViewModel.dayLiveData.observe(this, data -> day = data);                              //День,  для DatePickerDialog
+        mViewModel.monthLiveData.observe(this, data -> month = data - 1);                      //Месяц для DatePickerDialog
+        mViewModel.yearLiveData.observe(this, data -> year = data);                            // Год для DatePickerDialog
+        mViewModel.isGoneTimeExistLiveData.observe(this, isGoneTimeExist -> {
+            binding.activityMainGoneTextInputLayout.setEndIconVisible(isGoneTimeExist);
             if (isGoneTimeExist) {
-                binding.goneET.setTextColor(getResources().getColor(R.color.colorAccent));
-                binding.wasOnWorkET.setTextColor(getResources().getColor(R.color.colorPrimary));
+                binding.activityMainGoneTextInputEditText
+                        .setTextColor(getResources().getColor(R.color.colorAccent));
+                binding.activityMainTimeWasOnWorkTextInputEditText
+                        .setTextColor(getResources().getColor(R.color.colorPrimary));
             } else {
-                binding.goneET.setTextColor(getResources().getColor(R.color.colorLightGrey));
-                binding.wasOnWorkET.setTextColor(getResources().getColor(R.color.colorLightGrey));
+                binding.activityMainGoneTextInputEditText
+                        .setTextColor(getResources().getColor(R.color.colorLightGrey));
+                binding.activityMainTimeWasOnWorkTextInputEditText
+                        .setTextColor(getResources().getColor(R.color.colorLightGrey));
             }
         });
-        mViewModel.workedHoursSumLD.observe(this, data -> binding.workedHoursSum.setText(data));
-
-        initLeftArrowClickListener();
-        initRightArrowClickListener();
-        initComeBtnClickListener();
-        initGoneBtnClickListener();
-        initComeETClickListener();
-        initGoneETClickListener();
-        initDayETClickListener();
-        initComeTILEndIconClickListener();
-        initGoneTILEndIconClickListener();
+        mViewModel.workedHoursSumLiveData.observe(this, data ->
+                binding.activityMainWorkedHoursSumTextView.setText(data));
     }
 
-    private void initGoneTILEndIconClickListener() {
-        binding.goneTIL.setEndIconOnClickListener(v -> mViewModel.setGoneTime(null));
+    private void initGoneTextInputLayoutEndIconClickListener() {
+        binding.activityMainGoneTextInputLayout
+                .setEndIconOnClickListener(v -> mViewModel.setGoneTime(null));
     }
 
-    private void initComeTILEndIconClickListener() {
-        binding.comeTIL.setEndIconOnClickListener(v -> mViewModel.setComeTime(null));
+    private void initCameTextInputLayoutEndIconClickListener() {
+        binding.activityMainCameTextInputLayout
+                .setEndIconOnClickListener(v -> mViewModel.setCameTime(null));
     }
 
     private void initViewModel() {
@@ -111,43 +120,39 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 .build()
                 .inject(this);
 
-        mViewModel = new ViewModelProvider(this, new ViewModelFactory(interactor, resourceHolder)).get(DaysViewModel.class);
+        mViewModel = new ViewModelProvider(this, new ViewModelFactory(interactor, resourceHolder))
+                .get(DaysViewModel.class);
         getLifecycle().addObserver(mViewModel);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    public void initPreviousDayBtnClickListener() {
+        binding.activityMainPreviousDayBtn.setOnClickListener(v -> mViewModel.setPreviousDay());
     }
 
-    public void initLeftArrowClickListener() {
-        binding.leftBtn.setOnClickListener(v -> mViewModel.setPreviousDay());
+    public void initNextDayBtnClickListener() {
+        binding.activityMainNextDayBtn.setOnClickListener(v -> mViewModel.setNextDay());
     }
 
-    public void initRightArrowClickListener() {
-        binding.rightBtn.setOnClickListener(v -> mViewModel.setNextDay());
-    }
-
-    public void initComeBtnClickListener() {
-        binding.buttonCome.setOnClickListener(v -> mViewModel.setComeTime(TimeUtils.getCurrentTime()));
+    public void initCameBtnClickListener() {
+        binding.activityMainCameBtn.setOnClickListener(v -> mViewModel.setCameTime(TimeUtils.getCurrentTime()));
     }
 
     public void initGoneBtnClickListener() {
-        binding.buttonGone.setOnClickListener(v -> mViewModel.setGoneTime(TimeUtils.getCurrentTime()));
+        binding.activityMainGoneBtn.setOnClickListener(v -> mViewModel.setGoneTime(TimeUtils.getCurrentTime()));
     }
 
-    public void initComeETClickListener() {
-        binding.comeET.setOnClickListener(v -> {
+    public void initCameEditTextClickListener() {
+        binding.activityMainCameTextInputEditText.setOnClickListener(v -> {
             TimePickerDialog tpd = new TimePickerDialog(this,
                     (view, hourOfDay, minuteOfDay) ->
-                            mViewModel.setComeTime(TimeUtils.getTime(hourOfDay, minuteOfDay))
+                            mViewModel.setCameTime(TimeUtils.getTime(hourOfDay, minuteOfDay))
                     , TimeUtils.getCurrentHour(), TimeUtils.getCurrentMinutes(), true);
             tpd.show();
         });
     }
 
-    public void initGoneETClickListener() {
-        binding.goneET.setOnClickListener(v -> {
+    public void initGoneEditTextClickListener() {
+        binding.activityMainGoneTextInputEditText.setOnClickListener(v -> {
             TimePickerDialog tpd = new TimePickerDialog(this,
                     (view, hourOfDay, minuteOfDay) ->
                             mViewModel.setGoneTime(TimeUtils.getTime(hourOfDay, minuteOfDay)),
@@ -156,13 +161,16 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         });
     }
 
-    private void initDayETClickListener() {
-        binding.dayET.setOnClickListener(v -> showDatePickerDialog());
+    private void initDayEditTextClickListener() {
+        binding.activityMainDayTextInputEditText.setOnClickListener(v -> showDatePickerDialog());
     }
 
     private void showDatePickerDialog() {
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
-            String date = String.format(Locale.getDefault(), "%d.%02d.%02d", year, month + 1, dayOfMonth);
+        DatePickerDialog datePickerDialog =
+                new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
+            String date = String.format(
+                    Locale.getDefault(),
+                    "%d.%02d.%02d", year, month + 1, dayOfMonth);
             mViewModel.getDayEntity(date);
         }, year, month, day);
         datePickerDialog.show();
@@ -189,7 +197,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     private void goToListActivity() {
         Intent intent = new Intent(this, ListActivity.class);
         startActivityForResult(intent, 1);
-        Log.d(TAG, "Going to List activity");
     }
 
     @Override
@@ -203,40 +210,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     private void goToSettingsActivity() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
-        Log.d(TAG, "Going to Settings activity");
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (this.gestureDetector.onTouchEvent(event)) {
-            return true;
-        }
-        return super.onTouchEvent(event);
-    }
-
-    @Override
-    public boolean onDown(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent e) {
-        Log.d(TAG, "onShowPress: " + e.toString());
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent e) {
-
     }
 
     @Override
@@ -265,6 +238,37 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     protected void onPause() {
         mViewModel.deleteEmptyEntities();
         super.onPause();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (this.gestureDetector.onTouchEvent(event)) {
+            return true;
+        }
+        return super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
     }
 }
 

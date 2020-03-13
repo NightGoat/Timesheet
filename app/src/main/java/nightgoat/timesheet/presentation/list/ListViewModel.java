@@ -1,7 +1,5 @@
 package nightgoat.timesheet.presentation.list;
 
-import android.util.Log;
-
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.MutableLiveData;
@@ -12,7 +10,6 @@ import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.observers.DisposableCompletableObserver;
 import nightgoat.timesheet.database.DayEntity;
 import nightgoat.timesheet.domain.Interactor;
 
@@ -56,7 +53,7 @@ public class ListViewModel extends ViewModel implements LifecycleObserver, IList
 
     @Override
     public void setCameTime(DayEntity dayEntity, String time) {
-        dayEntity.setTimeCome(time);
+        dayEntity.setTimeCame(time);
         mDisposable.add(
                 interactor.updateDay(dayEntity)
                         .observeOn(AndroidSchedulers.mainThread())

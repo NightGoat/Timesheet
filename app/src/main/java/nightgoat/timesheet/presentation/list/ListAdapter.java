@@ -84,7 +84,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             String dateTitle = TimeUtils.getDateInNormalFormat(day.getDate()) + " " + TimeUtils.getDayOfTheWeek(day.getDate());
             cardDateTV.setText(dateTitle);
             this.itemView.setOnClickListener(v -> activity.finishActivityForResult(day.getDate()));
-            chipCame.setText(day.getTimeCome());
+            chipCame.setText(day.getTimeCame());
             chipGone.setText(day.getTimeGone());
             chipWas.setText(day.getTimeWorked());
             chipGone.setOnClickListener(v -> {

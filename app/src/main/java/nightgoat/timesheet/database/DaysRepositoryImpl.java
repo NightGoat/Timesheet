@@ -12,8 +12,8 @@ import java.util.List;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import nightgoat.timesheet.domain.DaysRepository;
+import timber.log.Timber;
 
 public class DaysRepositoryImpl implements DaysRepository {
 
@@ -63,14 +63,14 @@ public class DaysRepositoryImpl implements DaysRepository {
 
     @Override
     public Flowable<String> getWorkedHoursSum(String month, String year) {
-        Log.d("DaysRepositoryImpl", "getWorkedHoursSum: ");
+        Timber.tag(TAG).d("getWorkedHoursSum: ");
         return daysDao.getWorkedHoursSum(month, year);
     }
 
     private String countComeGoneDifference(DayEntity dayEntity) {
-        String timeCome = dayEntity.getTimeCome();
+        String timeCome = dayEntity.getTimeCame();
         String timeGone = dayEntity.getTimeGone();
-        Log.d("DaysViewModel", "countComeGoneDifference: ");
+        Timber.tag(TAG).d("countComeGoneDifference: ");
         DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm");
         if (timeCome != null && timeGone != null) {
             DateTime comeTimeDT = DateTime.parse(timeCome, formatter);
@@ -81,7 +81,7 @@ public class DaysRepositoryImpl implements DaysRepository {
                 return null;
             }
         } else {
-            Log.e(TAG, "ERROR counting difference because timeCome is: " + timeCome + " and timeGone is: " + timeGone);
+            Timber.tag(TAG).e("ERROR counting difference because timeCome is: " + timeCome + " and timeGone is: " + timeGone);
             return null;
         }
     }

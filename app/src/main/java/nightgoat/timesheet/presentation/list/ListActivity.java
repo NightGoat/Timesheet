@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -86,7 +85,6 @@ public class ListActivity extends AppCompatActivity implements ActivityForResult
     }
 
     private void initList() {
-        Log.d(TAG, "initList()");
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         adapter = new ListAdapter(mViewModel, this);
         binding.listActivityRecyclerView.setLayoutManager(layoutManager);
@@ -111,7 +109,6 @@ public class ListActivity extends AppCompatActivity implements ActivityForResult
     private void goToSettingsActivity() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
-        Log.d(TAG, "Going to Settings activity");
     }
 
     @Override

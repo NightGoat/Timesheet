@@ -15,8 +15,11 @@ import nightgoat.timesheet.IResourceHolder;
 import nightgoat.timesheet.R;
 import nightgoat.timesheet.domain.Interactor;
 import nightgoat.timesheet.presentation.ISnackBarMaker;
+import timber.log.Timber;
 
 public class SettingsViewModel extends ViewModel implements LifecycleObserver {
+
+    private final String TAG = SettingsViewModel.class.getName();
 
     MutableLiveData<Boolean> isProgressBarVisible = new MutableLiveData<>();
     MutableLiveData<Boolean> isOpenExcelFileBtnEnabled = new MutableLiveData<>();
@@ -46,13 +49,12 @@ public class SettingsViewModel extends ViewModel implements LifecycleObserver {
     void saveDBtoExcel() {
             File directory = new File(directory_path);
             if (!directory.exists()) {
-                Log.v("File Created", String.valueOf(directory.mkdirs()));
+                Timber.tag(TAG).v("File Created%s", String.valueOf(directory.mkdirs()));
             }
             SQLiteToExcel sqLiteToExcel = resourceHolder.createSQLiteToExcel();
             sqLiteToExcel.exportAllTables(filename, new SQLiteToExcel.ExportListener() {
                 @Override
                 public void onStart() {
-                    Log.d("SettingsViewModel", "onStart: ");
                     isProgressBarVisible.setValue(true);
                 }
 
@@ -62,12 +64,10 @@ public class SettingsViewModel extends ViewModel implements LifecycleObserver {
                     isProgressBarVisible.setValue(false);
                     isOpenExcelFileBtnEnabled.setValue(true);
                     checkIsExcelFileExists();
-                    Log.d("SettingsViewModel", "onCompleted: ");
                 }
 
                 @Override
                 public void onError(Exception e) {
-                    Log.d("SettingsViewModel", "onError: " + e.getMessage());
                     snackBarMaker.createSnackBar(e.getMessage());
                     isOpenExcelFileBtnEnabled.setValue(false);
                     isProgressBarVisible.setValue(false);
@@ -80,10 +80,8 @@ public class SettingsViewModel extends ViewModel implements LifecycleObserver {
         if (excelFile.exists()) {
             isOpenExcelFileBtnEnabled.setValue(true);
             excelFileLD.setValue(excelFile);
-            Log.d("SettingsViewModel", "checkIsExcelFileExists: " + directory_path + filename + " exists");
         } else {
             isOpenExcelFileBtnEnabled.setValue(false);
-            Log.d("SettingsViewModel", "checkIsExcelFileExists: " + directory_path + filename + " don't exists");
         }
     }
 }

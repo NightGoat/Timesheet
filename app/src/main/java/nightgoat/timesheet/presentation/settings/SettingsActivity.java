@@ -58,7 +58,8 @@ public class SettingsActivity extends AppCompatActivity implements ISnackBarMake
         initToolbar();
         initNeedToBeOnWorkListener();
         initCleanDBListener();
-        mViewModel.isOpenExcelFileBtnEnabled.observe(this, aBoolean -> binding.settingsOpenExcelBtn.setEnabled(aBoolean));
+        mViewModel.isOpenExcelFileBtnEnabled.observe(this, aBoolean ->
+                binding.settingsOpenExcelBtn.setEnabled(aBoolean));
         mViewModel.isProgressBarVisible.observe(this, aBoolean -> {
             if (aBoolean) binding.settingsProgressBar.setVisibility(View.VISIBLE);
             else binding.settingsProgressBar.setVisibility(View.INVISIBLE);
@@ -70,11 +71,14 @@ public class SettingsActivity extends AppCompatActivity implements ISnackBarMake
     }
 
     void saveDBtoExcel() {
-        if (ActivityCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (ActivityCompat.checkSelfPermission(
+                SettingsActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
         mViewModel.saveDBtoExcel();
         } else {
-            ActivityCompat.requestPermissions(SettingsActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            ActivityCompat.requestPermissions(
+                    SettingsActivity.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             saveDBtoExcel();
         }
     }
@@ -106,11 +110,14 @@ public class SettingsActivity extends AppCompatActivity implements ISnackBarMake
 
     private void initNeedToBeOnWorkListener() {
         SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
-        binding.settingsNeedToBeOnWorkValueTV.setText(sharedPreferences.getString("needToWork", "8:30"));
+        binding.settingsNeedToBeOnWorkValueTV.setText(
+                sharedPreferences.getString("needToWork", "8:30"));
         binding.settingsNeedToBeOnWorkValueTV.setOnClickListener(v -> {
             TimePickerDialog tpd = new TimePickerDialog(this,
                     (view, hourOfDay, minuteOfDay) -> {
-                        String time = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minuteOfDay);
+                        String time = String.format(
+                                Locale.getDefault(),
+                                "%02d:%02d", hourOfDay, minuteOfDay);
                         sharedPreferences
                                 .edit()
                                 .putString("needToWork", time)

@@ -55,7 +55,7 @@ dependencies {
     //Apache lang Utils
     implementation 'org.apache.commons:commons-lang3:3.6'
     //logger
-    implementation 'com.orhanobut:logger:2.2.0'
+    implementation 'com.jakewharton.timber:timber:4.7.1'
     //Dagger
     implementation 'com.google.dagger:dagger:2.24'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.24'

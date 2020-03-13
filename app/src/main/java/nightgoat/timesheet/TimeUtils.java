@@ -93,9 +93,7 @@ public class TimeUtils {
         if (period3.getHours() >= 24) {
             period3 = period3.minusHours(24);
         }
-        String result = formatter.print(period3);
-        Log.d("TimeUtils", "countTimeSum: result: " + result);
-        return result;
+        return formatter.print(period3);
     }
 
     public static String countTimeDiff(String time1, String time2){
@@ -113,8 +111,6 @@ public class TimeUtils {
         if (period.getMinutes() < 0) {
             period = period.withMinutes(period.getMinutes()*-1);
         }
-        String result = formatter.print(period);
-        Log.d("TimeUtils", "countTimeDiff: result: " + result);
-        return result;
+        return formatter.print(period);
     }
 }
