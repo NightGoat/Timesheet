@@ -1,12 +1,20 @@
 <resources>
-    <string name="app_name">Time to work</string>
-    <string name="come">Пришел</string>
-    <string name="gone">Ушел</string>
+    <string name="app_name" translatable="false">TimeSheet</string>
     <string name="day_before">Предыдущий день</string>
     <string name="day_after">Следующий день</string>
-    <string name="spentTimeToday">Был на работе:</string>
-    <string name="action_list">Список</string>
+    <string name="action_list">Список дней</string>
     <string name="action_settings">Настройки</string>
     <string name="search">Поиск</string>
     <string name="delete">Удалить</string>
+    <string name="saveToExcel">Сохранить базу данных в Excel</string>
+    <string name="cleanDB">Очистить базу данных</string>
+    <string name="openExcel">Открыть сохраненный excel файл</string>
+    <string name="today">Сегодня</string>
+    <string name="needToBeOnWorkTime">Длина рабочего дня</string>
+    <string name="noExcelApp">Пожалуйста, установите программу для открытия excel файлов</string>
+    <string name="deleteDB">Это действие приведет к удалению всех записей, вы уверены?</string>
+    <string name="yes">Да</string>
+    <string name="cancel">Отмена</string>
+    <string name="open">Открыть</string>
+    <string name="saved">Успешно сохранено в: </string>
 </resources>

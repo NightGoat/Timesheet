@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="day_before">Day before</string>
+    <string name="day_after">Next day</string>
+    <string name="action_list">List of days</string>
+    <string name="action_settings">Settings</string>
+    <string name="search">Search</string>
+    <string name="delete">Delete</string>
+    <string name="saveToExcel">Save database to Excel</string>
+    <string name="cleanDB">Clear database</string>
+    <string name="openExcel">Open saved Excel file</string>
+    <string name="today">Today</string>
+    <string name="needToBeOnWorkTime">Length of the working day</string>
+    <string name="noExcelApp">Please install excel app first</string>
+    <string name="deleteDB">All data will be deleted, are you sure?</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
+    <string name="open">Open</string>
+    <string name="saved">Successfully saved in: </string>
+</resources>

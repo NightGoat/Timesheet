@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="20sp"
-            tools:text="01.01.1991"
+            tools:text="01.01.1991 Воскресение"
             android:padding="4dp"
             android:gravity="center"
             android:background="@color/colorPrimary"
@@ -38,16 +38,38 @@
             android:background="@android:color/transparent"
             android:contentDescription="@string/delete" />
 
-        <TextView
-            android:id="@+id/card_timeWorked_textView"
-            android:layout_width="wrap_content"
+        <com.google.android.material.chip.ChipGroup
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            tools:text="Отработал: 20:21"
-            android:padding="8dp"
             card_view:layout_constraintTop_toBottomOf="@id/card_date_textView"
-            card_view:layout_constraintStart_toStartOf="parent"/>
+            card_view:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipCame"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                card_view:chipIcon="@drawable/ic_arrow_downward"
+                card_view:closeIconEnabled="true"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipGone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                card_view:chipIcon="@drawable/ic_arrow_upward"
+                card_view:closeIconEnabled="true"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipWas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                card_view:chipIcon="@drawable/ic_hourglass_empty"
+                card_view:rippleColor="@android:color/transparent"/>
+
+        </com.google.android.material.chip.ChipGroup>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>

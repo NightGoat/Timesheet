@@ -1,186 +1,252 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.main.MainActivity">
+    android:orientation="vertical">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/toolbar_layout"
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        style="@style/Widget.MaterialComponents.Toolbar.Surface">
+        android:layout_height="wrap_content">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:context=".presentation.main.MainActivity">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/toolbar_layout"
+                style="@style/Widget.MaterialComponents.Toolbar.Surface"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <ImageButton
+                android:id="@+id/left_btn"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+                android:layout_width="@dimen/image_btn"
+                android:layout_height="@dimen/image_btn"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:contentDescription="@string/day_before"
+                android:focusable="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_keyboard_arrow_left"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/dayTIL"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:focusable="false"
+                app:endIconDrawable="@drawable/ic_launcher_background"
+                app:hintTextAppearance="@style/TextLabel"
+                app:layout_constraintEnd_toStartOf="@id/right_btn"
+                app:layout_constraintStart_toEndOf="@id/left_btn"
+                app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/dayET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:focusable="false"
+                    android:gravity="center"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="32sp"
+                    tools:text="02.09.1991" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/right_btn"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+                android:layout_width="@dimen/image_btn"
+                android:layout_height="@dimen/image_btn"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:contentDescription="@string/day_after"
+                android:focusable="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_keyboard_arrow_right"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/left_btn" />
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/comeTIL"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:background="?selectableItemBackground"
+                android:focusable="false"
+                app:endIconMode="clear_text"
+                app:hintTextAppearance="@style/TextLabel"
+                app:layout_constraintEnd_toStartOf="@id/goneTIL"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/left_btn"
+                app:startIconDrawable="@drawable/ic_arrow_downward">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/comeET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="32sp"
+                    tools:text="22:22" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/goneTIL"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="?selectableItemBackground"
+                android:focusable="false"
+                app:boxStrokeColor="@color/colorPrimary"
+                app:endIconMode="clear_text"
+                app:hintTextAppearance="@style/TextLabel"
+                app:hintTextColor="@color/colorPrimary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/comeTIL"
+                app:layout_constraintTop_toTopOf="@id/comeTIL"
+                app:startIconDrawable="@drawable/ic_arrow_upward">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/goneET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="32sp"
+                    tools:text="22:22" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/wasOnWorkTIL"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:focusable="false"
+                app:hintTextAppearance="@style/TextLabel"
+                app:layout_constraintStart_toStartOf="@id/comeTIL"
+                app:layout_constraintTop_toBottomOf="@id/comeTIL"
+                app:layout_constraintEnd_toStartOf="@id/leftTimeTIL"
+                app:startIconDrawable="@drawable/ic_hourglass_empty">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/wasOnWorkET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="32sp"
+                    tools:text="6:30" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/leftTimeTIL"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:focusable="false"
+                app:hintTextAppearance="@style/TextLabel"
+                app:layout_constraintTop_toTopOf="@id/wasOnWorkTIL"
+                app:layout_constraintStart_toEndOf="@id/wasOnWorkTIL"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:startIconDrawable="@drawable/ic_hourglass_ful">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/leftTimeET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="32sp"
+                    tools:text="-2:10" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/workedHoursSum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/wasOnWorkTIL"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="16dp"
+                android:textSize="20sp"
+                tools:text="Отработано в этом месяце: 40 часов"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </ScrollView>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+        android:gravity="bottom"
+        android:orientation="horizontal">
 
-    </com.google.android.material.appbar.AppBarLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_come"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            app:icon="@drawable/ic_arrow_downward"
+            app:iconPadding="0dp"
+            app:iconGravity="textStart"
+            android:textSize="20sp" />
 
-    <ImageButton
-        android:id="@+id/left_btn"
-        android:layout_width="@dimen/image_btn"
-        android:layout_height="@dimen/image_btn"
-        android:src="@drawable/ic_keyboard_arrow_left"
-        android:scaleType="fitCenter"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
-        android:layout_margin="8dp"
-        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-        android:contentDescription="@string/day_before"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="?attr/selectableItemBackgroundBorderless"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_gone"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_weight="1"
+            app:icon="@drawable/ic_arrow_upward"
+            app:iconPadding="0dp"
+            app:iconGravity="textStart"
+            android:backgroundTint="@color/colorAccent"
+            android:textSize="20sp" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/day_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/left_btn"
-        app:layout_constraintBottom_toBottomOf="@id/left_btn"
-        app:layout_constraintStart_toEndOf="@id/left_btn"
-        app:layout_constraintEnd_toStartOf="@id/right_btn"
-        tools:text="01.01.1991"
-        android:textSize="32sp"
-        android:background="@drawable/ripple"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"/>
-
-    <ImageButton
-        android:id="@+id/right_btn"
-        android:layout_width="@dimen/image_btn"
-        android:layout_height="@dimen/image_btn"
-        android:src="@drawable/ic_keyboard_arrow_right"
-        android:scaleType="fitCenter"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/left_btn"
-        android:layout_marginEnd="8dp"
-        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-        android:contentDescription="@string/day_after"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="?attr/selectableItemBackgroundBorderless"
-         />
-
-    <TextView
-        android:id="@+id/come_today"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/come"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/left_btn"
-        android:layout_margin="16dp"
-        android:textSize="20sp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp" />
-
-    <TextView
-        android:id="@+id/come_today_TV"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/left_btn"
-        app:layout_constraintStart_toEndOf="@id/come_today"
-        tools:text="99:99"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="80dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:textSize="20sp"
-        android:gravity="center"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="@drawable/ripple"/>
-
-    <TextView
-        android:id="@+id/gone_today"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/come_today"
-        android:layout_margin="16dp"
-        android:textSize="20sp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"/>
-
-    <TextView
-        android:id="@+id/gone_today_TV"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/come_today_TV"
-        app:layout_constraintStart_toStartOf="@id/come_today_TV"
-        tools:text="22:21"
-        android:layout_marginTop="16dp"
-        android:textSize="20sp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:background="@drawable/ripple"
-        android:gravity="center"
-        android:clickable="true"
-        android:focusable="true"
-        />
-
-    <TextView
-        android:id="@+id/time_left_today"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/gone_today_TV"
-        app:layout_constraintStart_toStartOf="parent"
-        android:text="@string/spentTimeToday"
-        android:layout_margin="16dp"
-        android:textSize="20sp"/>
-
-    <FrameLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/gone_today_TV"
-        app:layout_constraintStart_toStartOf="@id/come_today_TV"
-        app:layout_constraintEnd_toEndOf="parent">
-
-    <TextView
-        android:id="@+id/time_left_today_TV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="Никаких путешествий во времени!"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:textSize="20sp"
-        android:paddingStart="25dp"
-        android:paddingEnd="5dp"/>
-
-    </FrameLayout>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_come"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:text="@string/come"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/button_gone"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        android:layout_marginStart="4dp"/>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_gone"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:text="@string/gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/button_come"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="4dp"
-        android:textColor="@color/colorAccent"/>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
