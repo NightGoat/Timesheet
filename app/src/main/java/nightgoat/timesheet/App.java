@@ -2,6 +2,8 @@ package nightgoat.timesheet;
 
 import android.app.Application;
 
+import com.facebook.stetho.Stetho;
+
 import nightgoat.timesheet.di.AppComponent;
 import nightgoat.timesheet.di.AppComponentModule;
 import nightgoat.timesheet.di.ContextModule;
@@ -24,6 +26,8 @@ public class App extends Application {
                 .dataModule(new DataModule())
                 .build();
         super.onCreate();
+
+        Stetho.initializeWithDefaults(this);
     }
 
     public AppComponent getAppComponent(){
