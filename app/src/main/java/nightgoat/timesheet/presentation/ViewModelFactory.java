@@ -13,7 +13,7 @@ import nightgoat.timesheet.presentation.settings.SettingsViewModel;
 public class ViewModelFactory implements ViewModelProvider.Factory {
 
     private final Interactor interactor;
-    private IResourceHolder resourceHolder;
+    private final IResourceHolder resourceHolder;
 
     public ViewModelFactory(Interactor interactor, IResourceHolder resourceHolder) {
         this.interactor = interactor;

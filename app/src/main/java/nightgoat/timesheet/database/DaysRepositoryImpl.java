@@ -1,13 +1,12 @@
 package nightgoat.timesheet.database;
 
-import android.util.Log;
-
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.List;
+import java.util.Locale;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
@@ -25,23 +24,33 @@ public class DaysRepositoryImpl implements DaysRepository {
         this.daysDao = daysDao;
     }
 
+    @Override
     public Flowable<List<DayEntity>> getAllDays() {
         return daysDao.getAllDays();
     }
 
+    @Override
+    public Flowable<List<DayEntity>> getAllDays(int month, int year) {
+        return daysDao.getAllDays(String.format(Locale.getDefault(),"%02d", month), String.valueOf(year));
+    }
+
+    @Override
     public Completable addDay(DayEntity model) {
         return daysDao.insertDay(model);
     }
 
+    @Override
     public Completable updateDay(DayEntity model) {
         model.setTimeWorked(countComeGoneDifference(model));
         return daysDao.updateDay(model);
     }
 
+    @Override
     public Maybe<DayEntity> getDayByDayModel(String date) {
         return daysDao.getDayByDate(date);
     }
 
+    @Override
     public Completable deleteDaysWithoutTime() {
         return daysDao.deleteDaysWithoutTime();
     }
@@ -57,14 +66,9 @@ public class DaysRepositoryImpl implements DaysRepository {
     }
 
     @Override
-    public Flowable<List<DayEntity>> getDaysWorkedTimeNonNull(int month, int year) {
-        return daysDao.getDaysWorkedTimeNonNull(month, year);
-    }
-
-    @Override
-    public Flowable<String> getWorkedHoursSum(String month, String year) {
+    public Flowable<List<String>> getWorkedHoursSumList(String month, String year) {
         Timber.tag(TAG).d("getWorkedHoursSum: ");
-        return daysDao.getWorkedHoursSum(month, year);
+        return daysDao.getWorkedHoursSumList(month, year);
     }
 
     private String countComeGoneDifference(DayEntity dayEntity) {

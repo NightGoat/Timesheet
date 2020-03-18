@@ -11,6 +11,8 @@ public interface DaysRepository {
 
     Flowable<List<DayEntity>> getAllDays();
 
+    Flowable<List<DayEntity>> getAllDays(int month, int year);
+
     Completable addDay(DayEntity model);
 
     Completable updateDay(DayEntity model);
@@ -23,7 +25,6 @@ public interface DaysRepository {
 
     Completable deleteEverything();
 
-    Flowable<List<DayEntity>> getDaysWorkedTimeNonNull(int month, int year);
+    Flowable<List<String>> getWorkedHoursSumList(String month, String year);
 
-    Flowable<String> getWorkedHoursSum(String month, String year);
 }

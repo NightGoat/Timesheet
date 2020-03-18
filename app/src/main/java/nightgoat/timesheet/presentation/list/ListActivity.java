@@ -1,10 +1,6 @@
 package nightgoat.timesheet.presentation.list;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -12,32 +8,39 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.google.android.material.chip.Chip;
+
 import javax.inject.Inject;
 
 import nightgoat.timesheet.App;
-import nightgoat.timesheet.IResourceHolder;
 import nightgoat.timesheet.R;
+import nightgoat.timesheet.database.DayEntity;
 import nightgoat.timesheet.databinding.ActivityListBinding;
 import nightgoat.timesheet.di.AppComponent;
-import nightgoat.timesheet.di.DaggerAcitivityComponent;
+import nightgoat.timesheet.di.DaggerActivityComponent;
 import nightgoat.timesheet.di.InteractorModule;
-import nightgoat.timesheet.domain.Interactor;
-import nightgoat.timesheet.presentation.ViewModelFactory;
-import nightgoat.timesheet.presentation.ActivityForResultFinisher;
+import nightgoat.timesheet.presentation.ActivityAdapterCallbacks;
 import nightgoat.timesheet.presentation.settings.SettingsActivity;
+import nightgoat.timesheet.utils.TimeType;
+import nightgoat.timesheet.utils.TimeUtils;
+import timber.log.Timber;
 
-public class ListActivity extends AppCompatActivity implements ActivityForResultFinisher {
+public class ListActivity extends AppCompatActivity implements ActivityAdapterCallbacks  {
 
     private ActivityListBinding binding;
-    private ListViewModel mViewModel;
     private ListAdapter adapter;
-    private final String TAG = ListActivity.class.getName();
+
+    @SuppressWarnings("unused")
+    private final static String TAG = ListActivity.class.getName();
+
+    private String month, year;
 
     @Inject
-    Interactor interactor;
-
-    @Inject
-    IResourceHolder resourceHolder;
+    ListViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,51 @@ public class ListActivity extends AppCompatActivity implements ActivityForResult
         initViewModel();
         initList();
         initSearchTextChangedListener();
+        initViewModelObservations();
+    }
+
+    private void initViewModelObservations() {
+        mViewModel.monthLD.observe(this, months -> {
+            binding.listChipGroupMonth.removeAllViews();
+            Timber.d("monthLD: size: %d", months.size());
+            for (String month: months) {
+                Chip chip = new Chip(this);
+                chip.setText(month);
+                chip.setCheckable(true);
+                if (TimeUtils.getMonthInt(month) == TimeUtils.getCurrentMonth()) {
+                    this.month = month;
+                    chip.setChecked(true);
+                }
+                binding.listChipGroupMonth.addView(chip);
+                chip.setOnClickListener(v -> {
+                    this.month = month;
+                    binding.listChipGroupMonth.clearCheck();
+                    chip.setChecked(true);
+                    mViewModel.getList(TimeUtils.getMonthInt(month), Integer.parseInt(year));
+                });
+            }
+        });
+
+        mViewModel.yearsLD.observe(this, years -> {
+            binding.listChipGroupYear.removeAllViews();
+            Timber.d("yearsLD: size: %d", years.size());
+            for (String year: years) {
+                Chip chip = new Chip(this);
+                chip.setText(year);
+                chip.setCheckable(true);
+                if (year.equalsIgnoreCase(String.valueOf(TimeUtils.getCurrentYear()))) {
+                    this.year = year;
+                    chip.setChecked(true);
+                }
+                binding.listChipGroupYear.addView(chip);
+                chip.setOnClickListener(v -> {
+                    this.year = year;
+                    binding.listChipGroupYear.clearCheck();
+                    chip.setChecked(true);
+                    mViewModel.getList(TimeUtils.getMonthInt(month), Integer.parseInt(year));
+                });
+            }
+        });
     }
 
     private void initSearchTextChangedListener() {
@@ -66,27 +114,27 @@ public class ListActivity extends AppCompatActivity implements ActivityForResult
     }
 
     private void initToolbar() {
-        binding.listActivityToolbar.setTitle(getString(R.string.action_list));
-        setSupportActionBar(binding.listActivityToolbar);
-        binding.listActivityToolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left);
-        binding.listActivityToolbar.setNavigationOnClickListener(v -> finish());
+        binding.listToolbar.setTitle(getString(R.string.action_list));
+        setSupportActionBar(binding.listToolbar);
+        binding.listToolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left);
+        binding.listToolbar.setNavigationOnClickListener(v -> finish());
     }
 
     private void initViewModel() {
         AppComponent component = ((App)getApplication()).getAppComponent();
-        DaggerAcitivityComponent.builder()
-                .appComponent(component)
+        DaggerActivityComponent.builder()
+                .setActivity(this)
+                .setDependencies(component)
                 .interactorModule(new InteractorModule())
                 .build()
                 .inject(this);
-        mViewModel = new ViewModelProvider(this, new ViewModelFactory(interactor, resourceHolder)).get(ListViewModel.class);
         getLifecycle().addObserver(mViewModel);
         mViewModel.daysLD.observe(this, data -> adapter.changeList(data));
     }
 
     private void initList() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        adapter = new ListAdapter(mViewModel, this);
+        adapter = new ListAdapter(this);
         binding.listActivityRecyclerView.setLayoutManager(layoutManager);
         binding.listActivityRecyclerView.setAdapter(adapter);
     }
@@ -112,10 +160,49 @@ public class ListActivity extends AppCompatActivity implements ActivityForResult
     }
 
     @Override
-    public void finishActivityForResult(String day) {
+    public void onClickFinish(String day) {
         Intent intent = new Intent();
         intent.putExtra("day", day);
         setResult(RESULT_OK, intent);
         finish();
     }
+
+    @Override
+    public void onClickDelete(DayEntity day) {
+        mViewModel.deleteDay(day);
+    }
+
+    @Override
+    public void onClickChip(DayEntity day, int timeType) {
+        showTimePickerDialog(day, timeType);
+    }
+
+
+    @Override
+    public void onClickCameChipClose(DayEntity day) {
+        mViewModel.setCameTime(day, null);
+    }
+
+    @Override
+    public void onClickGoneChipClose(DayEntity day) {
+        mViewModel.setGoneTime(day, null);
+    }
+
+    private void showTimePickerDialog(DayEntity day, int type){
+        TimePickerDialog tpd = new TimePickerDialog(this,
+                (view, hourOfDay, minuteOfDay) -> {
+                        switch (type) {
+                            case TimeType.CAME:
+                                mViewModel.setCameTime(day, TimeUtils.getTime(hourOfDay, minuteOfDay));
+                                break;
+                            case TimeType.GONE:
+                                mViewModel.setGoneTime(day, TimeUtils.getTime(hourOfDay, minuteOfDay));
+                                break;
+                        }
+        },
+                TimeUtils.getCurrentHour(), TimeUtils.getCurrentMinutes(), true);
+        tpd.show();
+    }
+
+
 }

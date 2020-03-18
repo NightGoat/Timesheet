@@ -25,6 +25,7 @@ public class DayEntity {
     @ColumnInfo(name = "worked_time")
     private String timeWorked;
 
+
     public DayEntity(@NonNull String date) {
         this.date = date;
     }

@@ -16,17 +16,14 @@ import io.reactivex.Maybe;
 @Dao
 public interface DaysDao {
 
-    @Query("SELECT * FROM days WHERE worked_time IS NOT NULL ORDER BY date")
-    Flowable<List<DayEntity>> getDaysWorkedTimeNonNull();
-
     @Query("SELECT * FROM days ORDER BY date")
     Flowable<List<DayEntity>> getAllDays();
 
-    @Query("SELECT * FROM days WHERE strftime('%m', date) = :month AND strftime('%Y', date) = :year AND worked_time IS NOT NULL")
-    Flowable<List<DayEntity>> getDaysWorkedTimeNonNull(int month, int year);
+    @Query("SELECT * FROM days WHERE strftime('%m', date) = :month AND strftime('%Y', date) = :year ORDER BY date")
+    Flowable<List<DayEntity>> getAllDays(String month, String year);
 
-    @Query("SELECT time(sum(strftime('%s', worked_time)), 'unixepoch') FROM days WHERE strftime('%Y', date) = :year AND strftime('%m', date) = :month")
-    Flowable<String> getWorkedHoursSum(String month, String year);
+    @Query("SELECT worked_time FROM days WHERE strftime('%Y', date) = :year AND strftime('%m', date) = :month AND worked_time IS NOT NULL")
+    Flowable<List<String>> getWorkedHoursSumList(String month, String year);
 
     @Query("SELECT * FROM days WHERE date = :date")
     Maybe<DayEntity> getDayByDate(String date);

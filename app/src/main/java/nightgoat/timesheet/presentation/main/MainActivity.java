@@ -1,10 +1,5 @@
 package nightgoat.timesheet.presentation.main;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -14,37 +9,36 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.Locale;
 
 import javax.inject.Inject;
 
 import nightgoat.timesheet.App;
-import nightgoat.timesheet.IResourceHolder;
 import nightgoat.timesheet.R;
-import nightgoat.timesheet.TimeUtils;
 import nightgoat.timesheet.databinding.ActivityMainBinding;
 import nightgoat.timesheet.di.AppComponent;
-import nightgoat.timesheet.di.DaggerAcitivityComponent;
+import nightgoat.timesheet.di.DaggerActivityComponent;
 import nightgoat.timesheet.di.InteractorModule;
-import nightgoat.timesheet.domain.Interactor;
 import nightgoat.timesheet.presentation.list.ListActivity;
-import nightgoat.timesheet.presentation.ViewModelFactory;
 import nightgoat.timesheet.presentation.settings.SettingsActivity;
-import timber.log.Timber;
+import nightgoat.timesheet.utils.TimeUtils;
 
-public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
+public class MainActivity extends AppCompatActivity {
 
     @Inject
-    Interactor interactor;
-    @Inject
-    IResourceHolder resourceHolder;
+    DaysViewModel mViewModel;
 
     private ActivityMainBinding binding;
-    private DaysViewModel mViewModel;
     private GestureDetector gestureDetector;
     private Integer day, month, year;
 
+    @SuppressWarnings("unused")
     private static final String TAG = MainActivity.class.getName();
+
     private static final int SWIPE_THRESHOLD = 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 100;
 
@@ -55,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         setContentView(binding.getRoot());
         setSupportActionBar(binding.activityMainToolbar);
         initViewModel();
-        gestureDetector = new GestureDetector(this, this);
+        gestureDetector = new GestureDetector(this, new MyGestureListener());
         initViewModelObservations();
         initPreviousDayBtnClickListener();
         initNextDayBtnClickListener();
@@ -68,13 +62,31 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         initGoneTextInputLayoutEndIconClickListener();
     }
 
+    private void initViewModel() {
+        AppComponent component = ((App) getApplication()).getAppComponent();
+        DaggerActivityComponent.builder()
+                .setActivity(this)
+                .setDependencies(component)
+                .interactorModule(new InteractorModule())
+                .build()
+                .inject(this);
+        getLifecycle().addObserver(mViewModel);
+    }
+
     private void initViewModelObservations() {
         mViewModel.timeCameLiveData.observe(this, data ->
                 binding.activityMainCameTextInputEditText.setText(data));                            //Пришел:
         mViewModel.timeGoneLiveData.observe(this, data ->
                 binding.activityMainGoneTextInputEditText.setText(data));                            //Ушел
-        mViewModel.dateLiveData.observe(this, data ->
-                binding.activityMainDayTextInputEditText.setText(data));                             //Дата
+        mViewModel.dateLiveData.observe(this, data -> {                                        //Дата
+                    if (data.equals(TimeUtils.getCurrentDateNormalFormat()))
+                        binding.activityMainDayTextInputEditText
+                                .setTextColor(getResources().getColor(R.color.colorPrimary));
+                    else binding.activityMainDayTextInputEditText
+                            .setTextColor(getResources().getColor(R.color.colorGrey));
+                    binding.activityMainDayTextInputEditText.setText(data);
+                }
+        );
         mViewModel.dayOfWeekLiveData.observe(this, data ->
                 binding.activityMainDayTextInputLayout.setHint(data));                               //День недели
         mViewModel.timeWasOnWorkLiveData.observe(this, data ->
@@ -99,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             }
         });
         mViewModel.workedHoursSumLiveData.observe(this, data ->
-                binding.activityMainWorkedHoursSumTextView.setText(data));
+                binding.activityMainWorkedHoursSumTextView2.setText(data));
     }
 
     private void initGoneTextInputLayoutEndIconClickListener() {
@@ -112,19 +124,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 .setEndIconOnClickListener(v -> mViewModel.setCameTime(null));
     }
 
-    private void initViewModel() {
-        AppComponent component = ((App) getApplication()).getAppComponent();
-        DaggerAcitivityComponent.builder()
-                .appComponent(component)
-                .interactorModule(new InteractorModule())
-                .build()
-                .inject(this);
-
-        mViewModel = new ViewModelProvider(this, new ViewModelFactory(interactor, resourceHolder))
-                .get(DaysViewModel.class);
-        getLifecycle().addObserver(mViewModel);
-    }
-
     public void initPreviousDayBtnClickListener() {
         binding.activityMainPreviousDayBtn.setOnClickListener(v -> mViewModel.setPreviousDay());
     }
@@ -134,11 +133,13 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     public void initCameBtnClickListener() {
-        binding.activityMainCameBtn.setOnClickListener(v -> mViewModel.setCameTime(TimeUtils.getCurrentTime()));
+        binding.activityMainCameBtn.setOnClickListener(v ->
+                mViewModel.setCameTime(TimeUtils.getCurrentTime()));
     }
 
     public void initGoneBtnClickListener() {
-        binding.activityMainGoneBtn.setOnClickListener(v -> mViewModel.setGoneTime(TimeUtils.getCurrentTime()));
+        binding.activityMainGoneBtn.setOnClickListener(v ->
+                mViewModel.setGoneTime(TimeUtils.getCurrentTime()));
     }
 
     public void initCameEditTextClickListener() {
@@ -168,11 +169,11 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     private void showDatePickerDialog() {
         DatePickerDialog datePickerDialog =
                 new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
-            String date = String.format(
-                    Locale.getDefault(),
-                    "%d.%02d.%02d", year, month + 1, dayOfMonth);
-            mViewModel.getDayEntity(date);
-        }, year, month, day);
+                    String date = String.format(
+                            Locale.getDefault(),
+                            "%d-%02d-%02d", year, month + 1, dayOfMonth);
+                    mViewModel.getDayEntity(date);
+                }, year, month, day);
         datePickerDialog.show();
     }
 
@@ -184,13 +185,17 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_list) {
-            goToListActivity();
-            return true;
-        } else if (id == R.id.action_today) {
-            mViewModel.getDayEntity(TimeUtils.getCurrentDate());
-        } else goToSettingsActivity();
+        switch (item.getItemId()) {
+            case R.id.action_list:
+                goToListActivity();
+                break;
+            case R.id.action_today:
+                mViewModel.getDayEntity(TimeUtils.getCurrentDate());
+                break;
+            case R.id.action_settings:
+                goToSettingsActivity();
+                break;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -212,27 +217,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         startActivity(intent);
     }
 
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        boolean result = false;
-        try {
-            float diffY = e2.getY() - e1.getY();
-            float diffX = e2.getX() - e1.getX();
-            if (Math.abs(diffX) > Math.abs(diffY)) {
-                if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                    if (diffX > 0) {
-                        mViewModel.setPreviousDay();
-                    } else {
-                        mViewModel.setNextDay();
-                    }
-                    result = true;
-                }
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-        return result;
-    }
 
     @Override
     protected void onPause() {
@@ -242,33 +226,40 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (this.gestureDetector.onTouchEvent(event)) {
-            return true;
-        }
+        this.gestureDetector.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
 
     @Override
-    public boolean onDown(MotionEvent e) {
-        return false;
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        super.dispatchTouchEvent(event);
+        return gestureDetector.onTouchEvent(event);
     }
 
-    @Override
-    public void onShowPress(MotionEvent e) {
-    }
 
-    @Override
-    public boolean onSingleTapUp(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent e) {
+    class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            boolean result = false;
+            try {
+                float diffY = e2.getY() - e1.getY();
+                float diffX = e2.getX() - e1.getX();
+                if (Math.abs(diffX) > Math.abs(diffY)) {
+                    if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                        if (diffX > 0) {
+                            mViewModel.setPreviousDay();
+                        } else {
+                            mViewModel.setNextDay();
+                        }
+                        result = true;
+                    }
+                }
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+            return result;
+        }
     }
 }
+
 

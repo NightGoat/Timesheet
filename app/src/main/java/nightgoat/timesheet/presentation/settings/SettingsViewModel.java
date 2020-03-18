@@ -1,7 +1,5 @@
 package nightgoat.timesheet.presentation.settings;
 
-import android.util.Log;
-
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -14,7 +12,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import nightgoat.timesheet.IResourceHolder;
 import nightgoat.timesheet.R;
 import nightgoat.timesheet.domain.Interactor;
-import nightgoat.timesheet.presentation.ISnackBarMaker;
 import timber.log.Timber;
 
 public class SettingsViewModel extends ViewModel implements LifecycleObserver {
@@ -24,10 +21,12 @@ public class SettingsViewModel extends ViewModel implements LifecycleObserver {
     MutableLiveData<Boolean> isProgressBarVisible = new MutableLiveData<>();
     MutableLiveData<Boolean> isOpenExcelFileBtnEnabled = new MutableLiveData<>();
     MutableLiveData<File> excelFileLD = new MutableLiveData<>();
+    MutableLiveData<String> snackBarMessageActionLiveData = new MutableLiveData<>();
+    MutableLiveData<String> snackBarMessageLiveData = new MutableLiveData<>();
+
 
     private Interactor interactor;
     private IResourceHolder resourceHolder;
-    private ISnackBarMaker snackBarMaker;
 
     private String directory_path;
     private final String filename = "TimeToWork.xls";
@@ -36,10 +35,6 @@ public class SettingsViewModel extends ViewModel implements LifecycleObserver {
         this.interactor = interactor;
         this.resourceHolder = resourceHolder;
         directory_path = resourceHolder.getDirectory();
-    }
-
-    void setSnackBarMaker(ISnackBarMaker snackBarMaker) {
-        this.snackBarMaker = snackBarMaker;
     }
 
     void deleteEverything(){
@@ -60,7 +55,7 @@ public class SettingsViewModel extends ViewModel implements LifecycleObserver {
 
                 @Override
                 public void onCompleted(String filePath) {
-                    snackBarMaker.createSnackBar(resourceHolder.getString(R.string.saved) + " " + filePath);
+                    snackBarMessageActionLiveData.setValue(resourceHolder.getString(R.string.saved) + " " + filePath);
                     isProgressBarVisible.setValue(false);
                     isOpenExcelFileBtnEnabled.setValue(true);
                     checkIsExcelFileExists();
@@ -68,7 +63,7 @@ public class SettingsViewModel extends ViewModel implements LifecycleObserver {
 
                 @Override
                 public void onError(Exception e) {
-                    snackBarMaker.createSnackBar(e.getMessage());
+                    snackBarMessageLiveData.setValue(resourceHolder.getString(R.string.error) + e.getMessage());
                     isOpenExcelFileBtnEnabled.setValue(false);
                     isProgressBarVisible.setValue(false);
                 }

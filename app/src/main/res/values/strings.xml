@@ -16,5 +16,31 @@
     <string name="yes">Да</string>
     <string name="cancel">Отмена</string>
     <string name="open">Открыть</string>
-    <string name="saved">Успешно сохранено в: </string>
+    <string name="saved">Успешно сохранено в:</string>
+    <string name="error">Ошибка:</string>
+    <string name="timeMonth">Отработано в этом месяце:</string>
+
+    <string-array name="month">
+        <item>Январь</item>
+        <item>Февраль</item>
+        <item>Март</item>
+        <item>Апрель</item>
+        <item>Май</item>
+        <item>Июнь</item>
+        <item>Июль</item>
+        <item>Август</item>
+        <item>Сентябрь</item>
+        <item>Октябрь</item>
+        <item>Ноябрь</item>
+        <item>Декабрь</item>
+    </string-array>
+
+    <string-array name="year">
+        <item>2020</item>
+        <item>2021</item>
+        <item>2022</item>
+        <item>2023</item>
+        <item>2024</item>
+        <item>2025</item>
+    </string-array>
 </resources>

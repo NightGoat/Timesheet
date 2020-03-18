@@ -20,7 +20,7 @@ public class AppComponentModule {
 
     @Provides
     @Singleton
-    DaysDao provideRepository(DaysDatabase database){
+    DaysDao provideDaysDao(DaysDatabase database){
         return database.getDaysDao();
     }
 }
