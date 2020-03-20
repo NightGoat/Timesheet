@@ -20,10 +20,10 @@ public abstract class TimeUtils {
 
     public static int getCurrentMonth() {
         calendar.setTimeInMillis(System.currentTimeMillis());
-        return calendar.get(Calendar.MONTH)+1;
+        return calendar.get(Calendar.MONTH) + 1;
     }
 
-    public static String getMonthString(String month){
+    public static String getMonthString(String month) {
         DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("MM");
         DateTime dt = sqlFormat.parseDateTime(month);
         Timber.d("getMonthString: month: %s, string: %s",
@@ -32,13 +32,13 @@ public abstract class TimeUtils {
         return StringUtils.capitalize(dt.monthOfYear().getAsText(Locale.getDefault()));
     }
 
-    public static String getMonthStringShort(String month){
+    public static String getMonthStringShort(String month) {
         DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("M");
         DateTime dt = sqlFormat.parseDateTime(month);
         return dt.toString("MMM", Locale.getDefault());
     }
 
-    public static int getMonthInt(String month){
+    public static int getMonthInt(String month) {
         DateTimeFormatter formatter = DateTimeFormat.forPattern("MMM").withLocale(Locale.getDefault());
         DateTime dt = formatter.parseDateTime(month);
         return dt.getMonthOfYear();
@@ -47,6 +47,11 @@ public abstract class TimeUtils {
     public static int getCurrentYear() {
         calendar.setTimeInMillis(System.currentTimeMillis());
         return calendar.get(Calendar.YEAR);
+    }
+
+    public static String getCurrentYearString() {
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        return String.valueOf(calendar.get(Calendar.YEAR));
     }
 
     public static String getCurrentTime() {
@@ -67,37 +72,37 @@ public abstract class TimeUtils {
         return calendar.get(Calendar.MINUTE);
     }
 
-    public static String getCurrentDate(){
+    public static String getCurrentDate() {
         DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
         return sqlFormat.print(System.currentTimeMillis());
     }
 
-    public static String getCurrentDateNormalFormat(){
+    public static String getCurrentDateNormalFormat() {
         DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("dd.MM.yyyy");
         return sqlFormat.print(System.currentTimeMillis());
     }
 
-    public static String getDateInNormalFormat(String sqlDate){
+    public static String getDateInNormalFormat(String sqlDate) {
         DateTimeFormatter normalFormat = DateTimeFormat.forPattern("dd.MM.yyyy");
         DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
         DateTime sqlDateTime = sqlFormat.parseDateTime(sqlDate);
         return normalFormat.print(sqlDateTime.getMillis());
     }
 
-    public static String getDayOfTheWeek(String sqlDate){
+    public static String getDayOfTheWeek(String sqlDate) {
         DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
         DateTime sqlDateTime = sqlFormat.parseDateTime(sqlDate);
         return StringUtils.capitalize(sqlDateTime.dayOfWeek().getAsText(Locale.getDefault()));
     }
 
-    public static String getDayOfTheWeekShort(String sqlDate){
+    public static String getDayOfTheWeekShort(String sqlDate) {
         DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
         DateTimeFormatter dayOfWeekFormat = DateTimeFormat.forPattern("E");
         DateTime sqlDateTime = sqlFormat.parseDateTime(sqlDate);
         return dayOfWeekFormat.print(sqlDateTime);
     }
 
-    public static String countTimeSum24(String time1, String time2){
+    public static String countTimeSum24(String time1, String time2) {
         PeriodFormatter formatter = new PeriodFormatterBuilder()
                 .minimumPrintedDigits(2)
                 .printZeroAlways()
@@ -108,7 +113,7 @@ public abstract class TimeUtils {
         Period period1 = formatter.parsePeriod(time1);
         Period period2 = formatter.parsePeriod(time2);
         Period period3 = period1.plus(period2);
-        if (period3.getMinutes() >= 60){
+        if (period3.getMinutes() >= 60) {
             period3 = period3.plusHours(1).minusMinutes(60);
         }
         if (period3.getHours() >= 24) {
@@ -118,8 +123,7 @@ public abstract class TimeUtils {
         return formatter.print(period3);
     }
 
-    public static String countTimeSum(String time1, String time2){
-
+    public static String countTimeSum(String time1, String time2) {
         PeriodFormatter formatter = new PeriodFormatterBuilder()
                 .minimumPrintedDigits(2)
                 .printZeroAlways()
@@ -130,14 +134,14 @@ public abstract class TimeUtils {
         Period period1 = formatter.parsePeriod(time1);
         Period period2 = formatter.parsePeriod(time2);
         Period period3 = period1.plus(period2);
-        if (period3.getMinutes() >= 60){
+        if (period3.getMinutes() >= 60) {
             period3 = period3.plusHours(1).minusMinutes(60);
         }
         Timber.tag(TAG).i("time1(%s) + time2(%s) = %s", time1, time2, formatter.print(period3));
         return formatter.print(period3);
     }
 
-    public static String countTimeDiff(String time1, String time2){
+    public static String countTimeDiff(String time1, String time2) {
         PeriodFormatter formatter = new PeriodFormatterBuilder()
                 .minimumPrintedDigits(2)
                 .printZeroAlways()
@@ -150,7 +154,7 @@ public abstract class TimeUtils {
         DateTime time2DT = DateTime.parse(time2, formatter2);
         Period period = new Period(time1DT, time2DT);
         if (period.getMinutes() < 0) {
-            period = period.withMinutes(period.getMinutes()*-1);
+            period = period.withMinutes(period.getMinutes() * -1);
         }
         return formatter.print(period);
     }

@@ -9,7 +9,7 @@
     android:orientation="vertical">
 
     <ScrollView
-        android:id="@+id/activity_main_scrollView"
+        android:id="@+id/main_scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -20,7 +20,7 @@
             tools:context=".presentation.main.MainActivity">
 
             <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/activity_main_appBarLayout"
+                android:id="@+id/main_appBarLayout"
                 style="@style/Widget.MaterialComponents.Toolbar.Surface"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/activity_main_toolbar"
+                    android:id="@+id/main_toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     app:layout_constraintStart_toStartOf="parent"
@@ -37,7 +37,7 @@
             </com.google.android.material.appbar.AppBarLayout>
 
             <ImageButton
-                android:id="@+id/activity_main_previousDay_btn"
+                android:id="@+id/main_btn_previousDay"
                 style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
                 android:layout_width="@dimen/image_btn"
                 android:layout_height="@dimen/image_btn"
@@ -50,10 +50,10 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_keyboard_arrow_left"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/activity_main_appBarLayout" />
+                app:layout_constraintTop_toBottomOf="@id/main_appBarLayout" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/activity_main_day_TextInputLayout"
+                android:id="@+id/main_TextInputLayout_date"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -61,12 +61,12 @@
                 android:focusable="false"
                 app:endIconDrawable="@drawable/ic_launcher_background"
                 app:hintTextAppearance="@style/TextLabel"
-                app:layout_constraintEnd_toStartOf="@id/activity_main_nextDay_btn"
-                app:layout_constraintStart_toEndOf="@id/activity_main_previousDay_btn"
-                app:layout_constraintTop_toBottomOf="@id/activity_main_appBarLayout">
+                app:layout_constraintEnd_toStartOf="@id/main_btn_nextDay"
+                app:layout_constraintStart_toEndOf="@id/main_btn_previousDay"
+                app:layout_constraintTop_toBottomOf="@id/main_appBarLayout">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/activity_main_day_TextInputEditText"
+                    android:id="@+id/main_edit_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?selectableItemBackgroundBorderless"
@@ -79,7 +79,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <ImageButton
-                android:id="@+id/activity_main_nextDay_btn"
+                android:id="@+id/main_btn_nextDay"
                 style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
                 android:layout_width="@dimen/image_btn"
                 android:layout_height="@dimen/image_btn"
@@ -91,11 +91,11 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_keyboard_arrow_right"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/activity_main_previousDay_btn" />
+                app:layout_constraintTop_toTopOf="@id/main_btn_previousDay" />
 
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/activity_main_came_TextInputLayout"
+                android:id="@+id/main_TextInputLayout_came"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -105,13 +105,13 @@
                 android:focusable="false"
                 app:endIconMode="clear_text"
                 app:hintTextAppearance="@style/TextLabel"
-                app:layout_constraintEnd_toStartOf="@id/activity_main_gone_TextInputLayout"
+                app:layout_constraintEnd_toStartOf="@id/main_TextInputLayout_gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/activity_main_previousDay_btn"
+                app:layout_constraintTop_toBottomOf="@id/main_btn_previousDay"
                 app:startIconDrawable="@drawable/ic_arrow_downward">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/activity_main_came_TextInputEditText"
+                    android:id="@+id/main_edit_came"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
@@ -123,7 +123,7 @@
 
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/activity_main_gone_TextInputLayout"
+                android:id="@+id/main_TextInputLayout_gone"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -136,12 +136,12 @@
                 app:hintTextAppearance="@style/TextLabel"
                 app:hintTextColor="@color/colorPrimary"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/activity_main_came_TextInputLayout"
-                app:layout_constraintTop_toTopOf="@id/activity_main_came_TextInputLayout"
+                app:layout_constraintStart_toEndOf="@id/main_TextInputLayout_came"
+                app:layout_constraintTop_toTopOf="@id/main_TextInputLayout_came"
                 app:startIconDrawable="@drawable/ic_arrow_upward">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/activity_main_gone_TextInputEditText"
+                    android:id="@+id/main_edit_gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
@@ -152,20 +152,20 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/activity_main_timeWasOnWork_TextInputLayout"
+                android:id="@+id/main_timeWasOnWork_TextInputLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:focusable="false"
                 app:hintTextAppearance="@style/TextLabel"
-                app:layout_constraintEnd_toStartOf="@id/activity_main_timeLeftToWork_TextInputLayout"
-                app:layout_constraintStart_toStartOf="@id/activity_main_came_TextInputLayout"
-                app:layout_constraintTop_toBottomOf="@id/activity_main_came_TextInputLayout"
+                app:layout_constraintEnd_toStartOf="@id/main_TextInputLayout_timeLeftToWork"
+                app:layout_constraintStart_toStartOf="@id/main_TextInputLayout_came"
+                app:layout_constraintTop_toBottomOf="@id/main_TextInputLayout_came"
                 app:startIconDrawable="@drawable/ic_hourglass_empty">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/activity_main_timeWasOnWork_TextInputEditText"
+                    android:id="@+id/main_edit_timeWasOnWork"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
@@ -176,7 +176,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/activity_main_timeLeftToWork_TextInputLayout"
+                android:id="@+id/main_TextInputLayout_timeLeftToWork"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -185,12 +185,12 @@
                 android:focusable="false"
                 app:hintTextAppearance="@style/TextLabel"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/activity_main_timeWasOnWork_TextInputLayout"
-                app:layout_constraintTop_toTopOf="@id/activity_main_timeWasOnWork_TextInputLayout"
+                app:layout_constraintStart_toEndOf="@id/main_timeWasOnWork_TextInputLayout"
+                app:layout_constraintTop_toTopOf="@id/main_timeWasOnWork_TextInputLayout"
                 app:startIconDrawable="@drawable/ic_hourglass_ful">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/activity_main_timeLeftToWork_TextInputEditText"
+                    android:id="@+id/main_edit_timeLeftToWork"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
@@ -206,7 +206,7 @@
                 android:layout_margin="4dp"
                 app:cardUseCompatPadding="true"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/activity_main_timeWasOnWork_TextInputLayout"
+                app:layout_constraintTop_toBottomOf="@id/main_timeWasOnWork_TextInputLayout"
                 card_view:cardCornerRadius="4dp"
                 card_view:cardElevation="4dp">
 
@@ -217,7 +217,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/activity_main_workedHoursSum_TextView"
+                        android:id="@+id/main_text_workedHoursSum"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -225,7 +225,7 @@
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/activity_main_workedHoursSum_TextView2"
+                        android:id="@+id/main_text_workedHoursSum_value"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"

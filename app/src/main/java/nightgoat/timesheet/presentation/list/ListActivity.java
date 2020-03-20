@@ -3,6 +3,7 @@ package nightgoat.timesheet.presentation.list;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -14,6 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.chip.Chip;
 
+import java.time.Year;
+import java.util.Set;
+
 import javax.inject.Inject;
 
 import nightgoat.timesheet.App;
@@ -21,15 +25,15 @@ import nightgoat.timesheet.R;
 import nightgoat.timesheet.database.DayEntity;
 import nightgoat.timesheet.databinding.ActivityListBinding;
 import nightgoat.timesheet.di.AppComponent;
-import nightgoat.timesheet.di.DaggerActivityComponent;
-import nightgoat.timesheet.di.InteractorModule;
+import nightgoat.timesheet.di.DaggerListActivityComponent;
 import nightgoat.timesheet.presentation.ActivityAdapterCallbacks;
 import nightgoat.timesheet.presentation.settings.SettingsActivity;
+import nightgoat.timesheet.utils.DateType;
 import nightgoat.timesheet.utils.TimeType;
 import nightgoat.timesheet.utils.TimeUtils;
 import timber.log.Timber;
 
-public class ListActivity extends AppCompatActivity implements ActivityAdapterCallbacks  {
+public class ListActivity extends AppCompatActivity implements ActivityAdapterCallbacks {
 
     private ActivityListBinding binding;
     private ListAdapter adapter;
@@ -58,54 +62,61 @@ public class ListActivity extends AppCompatActivity implements ActivityAdapterCa
         mViewModel.monthLD.observe(this, months -> {
             binding.listChipGroupMonth.removeAllViews();
             Timber.d("monthLD: size: %d", months.size());
-            for (String month: months) {
-                Chip chip = new Chip(this);
-                chip.setText(month);
-                chip.setCheckable(true);
-                if (TimeUtils.getMonthInt(month) == TimeUtils.getCurrentMonth()) {
-                    this.month = month;
-                    chip.setChecked(true);
-                }
-                binding.listChipGroupMonth.addView(chip);
-                chip.setOnClickListener(v -> {
-                    this.month = month;
-                    binding.listChipGroupMonth.clearCheck();
-                    chip.setChecked(true);
-                    mViewModel.getList(TimeUtils.getMonthInt(month), Integer.parseInt(year));
-                });
-            }
+            createChips(months, DateType.MONTH);
         });
 
         mViewModel.yearsLD.observe(this, years -> {
             binding.listChipGroupYear.removeAllViews();
             Timber.d("yearsLD: size: %d", years.size());
-            for (String year: years) {
-                Chip chip = new Chip(this);
-                chip.setText(year);
-                chip.setCheckable(true);
-                if (year.equalsIgnoreCase(String.valueOf(TimeUtils.getCurrentYear()))) {
-                    this.year = year;
-                    chip.setChecked(true);
-                }
-                binding.listChipGroupYear.addView(chip);
-                chip.setOnClickListener(v -> {
-                    this.year = year;
-                    binding.listChipGroupYear.clearCheck();
-                    chip.setChecked(true);
-                    mViewModel.getList(TimeUtils.getMonthInt(month), Integer.parseInt(year));
-                });
-            }
+            createChips(years, DateType.YEAR);
         });
+    }
+
+    private void createChips(Set<String> array, DateType type) {
+        for (String s : array) {
+            Chip chip = new Chip(this);
+            chip.setText(s);
+            chip.setCheckable(true);
+
+            switch (type) {
+                case YEAR:
+                    if (s.equals(TimeUtils.getCurrentYearString())) {
+                        this.year = s;
+                        chip.setChecked(true);
+                    }
+                    chip.setOnClickListener(v -> {
+                        this.year = s;
+                        binding.listChipGroupYear.clearCheck();
+                        chip.setChecked(true);
+                        mViewModel.getList(TimeUtils.getMonthInt(month), Integer.parseInt(year));
+                    });
+                    binding.listChipGroupYear.addView(chip);
+                    break;
+                case MONTH:
+                    if (TimeUtils.getMonthInt(s) == TimeUtils.getCurrentMonth()) {
+                        this.month = s;
+                        chip.setChecked(true);
+                    }
+                    chip.setOnClickListener(v -> {
+                        this.month = s;
+                        binding.listChipGroupMonth.clearCheck();
+                        chip.setChecked(true);
+                        mViewModel.getList(TimeUtils.getMonthInt(month), Integer.parseInt(year));
+                    });
+                    binding.listChipGroupMonth.addView(chip);
+                    break;
+            }
+        }
     }
 
     private void initSearchTextChangedListener() {
         binding.listActivityEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
             @Override
             public void afterTextChanged(Editable s) {
                 adapter.filter(s.toString());
@@ -121,11 +132,10 @@ public class ListActivity extends AppCompatActivity implements ActivityAdapterCa
     }
 
     private void initViewModel() {
-        AppComponent component = ((App)getApplication()).getAppComponent();
-        DaggerActivityComponent.builder()
+        AppComponent component = ((App) getApplication()).getAppComponent();
+        DaggerListActivityComponent.builder()
                 .setActivity(this)
                 .setDependencies(component)
-                .interactorModule(new InteractorModule())
                 .build()
                 .inject(this);
         getLifecycle().addObserver(mViewModel);
@@ -173,8 +183,8 @@ public class ListActivity extends AppCompatActivity implements ActivityAdapterCa
     }
 
     @Override
-    public void onClickChip(DayEntity day, int timeType) {
-        showTimePickerDialog(day, timeType);
+    public void onClickChip(DayEntity day, TimeType type) {
+        showTimePickerDialog(day, type);
     }
 
 
@@ -188,18 +198,18 @@ public class ListActivity extends AppCompatActivity implements ActivityAdapterCa
         mViewModel.setGoneTime(day, null);
     }
 
-    private void showTimePickerDialog(DayEntity day, int type){
+    private void showTimePickerDialog(DayEntity day, TimeType type) {
         TimePickerDialog tpd = new TimePickerDialog(this,
                 (view, hourOfDay, minuteOfDay) -> {
-                        switch (type) {
-                            case TimeType.CAME:
-                                mViewModel.setCameTime(day, TimeUtils.getTime(hourOfDay, minuteOfDay));
-                                break;
-                            case TimeType.GONE:
-                                mViewModel.setGoneTime(day, TimeUtils.getTime(hourOfDay, minuteOfDay));
-                                break;
-                        }
-        },
+                    switch (type) {
+                        case CAME:
+                            mViewModel.setCameTime(day, TimeUtils.getTime(hourOfDay, minuteOfDay));
+                            break;
+                        case GONE:
+                            mViewModel.setGoneTime(day, TimeUtils.getTime(hourOfDay, minuteOfDay));
+                            break;
+                    }
+                },
                 TimeUtils.getCurrentHour(), TimeUtils.getCurrentMinutes(), true);
         tpd.show();
     }

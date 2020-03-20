@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "372425481016",
+    "firebase_url": "https://timesheet-270819.firebaseio.com",
+    "project_id": "timesheet-270819",
+    "storage_bucket": "timesheet-270819.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372425481016:android:ac1ffbd5cf697ca38effcd",
+        "android_client_info": {
+          "package_name": "nightgoat.timesheet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "372425481016-kdud5l90rf5kdga9f5gu31ip6fusa11k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-0TCZamGcm4cnJNZtw3V1EZS4roy-mi4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "372425481016-kdud5l90rf5kdga9f5gu31ip6fusa11k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

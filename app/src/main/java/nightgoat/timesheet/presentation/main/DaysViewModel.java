@@ -32,17 +32,8 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
 
     private final String TAG = DaysViewModel.class.getName();
 
-    MutableLiveData<String> timeCameLiveData = new MutableLiveData<>();
-    MutableLiveData<String> timeGoneLiveData = new MutableLiveData<>();
-    MutableLiveData<String> dateLiveData = new MutableLiveData<>();
-    MutableLiveData<String> timeWasOnWorkLiveData = new MutableLiveData<>();
-    MutableLiveData<String> timeLeftToWorkTodayLiveData = new MutableLiveData<>();
-    MutableLiveData<String> dayOfWeekLiveData = new MutableLiveData<>();
-    MutableLiveData<Integer> dayLiveData = new MutableLiveData<>();
-    MutableLiveData<Integer> monthLiveData = new MutableLiveData<>();
-    MutableLiveData<Integer> yearLiveData = new MutableLiveData<>();
-    MutableLiveData<Boolean> isGoneTimeExistLiveData = new MutableLiveData<>();
-    MutableLiveData<String> workedHoursSumLiveData = new MutableLiveData<>();
+    private DataContainer dataContainer;
+    MutableLiveData<DataContainer> containerLiveData = new MutableLiveData<>();
     private final CompositeDisposable mDisposable = new CompositeDisposable();
 
     private List<DayEntity> days;
@@ -72,6 +63,7 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
                     currentTime = TimeUtils.getCurrentTime();
                     countComeGoneDifference();
                 }, e -> Timber.tag(TAG).d("interval error: %s", e.getMessage())));
+        dataContainer = new DataContainer();
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -108,12 +100,13 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
         Timber.tag(TAG).d(
                 "DayEntity timeCame: %s, timeGone: %s, timeDifference: %s",
                 timeCome, timeGone, timeDifference);
-        timeCameLiveData.postValue(timeCome);
-        timeGoneLiveData.postValue(timeGone);
         countComeGoneDifference();
         countTimeCanGoHome();
-        dateLiveData.postValue(TimeUtils.getDateInNormalFormat(date));
-        dayOfWeekLiveData.postValue(TimeUtils.getDayOfTheWeek(date));
+        dataContainer.timeCame = timeCome;
+        dataContainer.timeGone = timeGone;
+        dataContainer.date = TimeUtils.getDateInNormalFormat(date);
+        dataContainer.dayOfWeek = TimeUtils.getDayOfTheWeek(date);
+        containerLiveData.postValue(dataContainer);
     }
 
     void setPreviousDay() {
@@ -160,9 +153,10 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
             getWorkedHoursSum(month, year);
             Timber.tag(TAG).i("getDate: in if statement");
         }
-        dayLiveData.postValue(day);
-        monthLiveData.postValue(month);
-        yearLiveData.postValue(year);
+        dataContainer.day = day;
+        dataContainer.month = month - 1;
+        dataContainer.year = year;
+        containerLiveData.postValue(dataContainer);
         date = String.format(Locale.getDefault(), "%d-%02d-%02d", year, month, day);
     }
 
@@ -176,7 +170,8 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
                         .subscribe(
                                 sum -> {
                                     Timber.tag(TAG).i("getWorkedHoursSum: sum: %s", sum);
-                                    workedHoursSumLiveData.setValue(sum);
+                                    dataContainer.workedHoursSum = sum;
+                                    containerLiveData.postValue(dataContainer);
                                 },
                                 throwable ->
                                         Timber.tag(TAG)
@@ -201,34 +196,35 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
                 timeDifference = formatter.print(new Duration(comeTimeDT, nowTimeDT).getMillis());
             }
         }
-        timeWasOnWorkLiveData.postValue(timeDifference);
+        dataContainer.timeWasOnWork = timeDifference;
+        containerLiveData.postValue(dataContainer);
         countTimeLeftToWorkToday();
     }
 
     private void countTimeLeftToWorkToday() {
         if (timeDifference != null) {
-            timeLeftToWorkTodayLiveData
-                    .postValue(TimeUtils.countTimeDiff(timeNeedToWork, timeDifference));
+            dataContainer.timeLeftToWorkToday = TimeUtils.countTimeDiff(timeNeedToWork, timeDifference);
         } else {
-            timeLeftToWorkTodayLiveData.postValue(null);
+            dataContainer.timeLeftToWorkToday = null;
         }
+        containerLiveData.postValue(dataContainer);
     }
 
     private void countTimeCanGoHome() {
         if (timeCome != null && timeGone == null) {
-            String timeCanGoHomeAt = TimeUtils.countTimeSum24(timeCome, timeNeedToWork);
-            timeGoneLiveData.postValue(timeCanGoHomeAt);
-            isGoneTimeExistLiveData.postValue(false);
+            dataContainer.timeGone = TimeUtils.countTimeSum24(timeCome, timeNeedToWork);
+            dataContainer.isGoneTimeExist = false;
         } else if (timeCome != null) {
-            isGoneTimeExistLiveData.postValue(true);
+            dataContainer.isGoneTimeExist = true;
         } else if (timeGone != null) {
-            timeCameLiveData.postValue(null);
-            isGoneTimeExistLiveData.postValue(true);
+            dataContainer.timeCame = null;
+            dataContainer.isGoneTimeExist = true;
         } else {
-            timeGoneLiveData.postValue(null);
-            timeCameLiveData.postValue(null);
-            isGoneTimeExistLiveData.postValue(false);
+            dataContainer.timeGone = null;
+            dataContainer.timeCame = null;
+            dataContainer.isGoneTimeExist = false;
         }
+        containerLiveData.postValue(dataContainer);
     }
 
     @Override

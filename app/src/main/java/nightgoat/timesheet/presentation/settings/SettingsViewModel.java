@@ -41,6 +41,8 @@ public class SettingsViewModel extends ViewModel implements LifecycleObserver {
         interactor.deleteEverything().observeOn(AndroidSchedulers.mainThread()).subscribe();
     }
 
+    //FileOutputStream fos = new FileOutputStream(Environment.getExternalStorageDirectory().getAbsolutePath()+"/image.png");
+
     void saveDBtoExcel() {
             File directory = new File(directory_path);
             if (!directory.exists()) {

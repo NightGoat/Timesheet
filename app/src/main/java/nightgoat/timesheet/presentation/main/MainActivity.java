@@ -21,8 +21,7 @@ import nightgoat.timesheet.App;
 import nightgoat.timesheet.R;
 import nightgoat.timesheet.databinding.ActivityMainBinding;
 import nightgoat.timesheet.di.AppComponent;
-import nightgoat.timesheet.di.DaggerActivityComponent;
-import nightgoat.timesheet.di.InteractorModule;
+import nightgoat.timesheet.di.DaggerMainActivityComponent;
 import nightgoat.timesheet.presentation.list.ListActivity;
 import nightgoat.timesheet.presentation.settings.SettingsActivity;
 import nightgoat.timesheet.utils.TimeUtils;
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        setSupportActionBar(binding.activityMainToolbar);
+        setSupportActionBar(binding.mainToolbar);
         initViewModel();
         gestureDetector = new GestureDetector(this, new MyGestureListener());
         initViewModelObservations();
@@ -64,72 +63,64 @@ public class MainActivity extends AppCompatActivity {
 
     private void initViewModel() {
         AppComponent component = ((App) getApplication()).getAppComponent();
-        DaggerActivityComponent.builder()
+        DaggerMainActivityComponent.builder()
                 .setActivity(this)
                 .setDependencies(component)
-                .interactorModule(new InteractorModule())
                 .build()
                 .inject(this);
         getLifecycle().addObserver(mViewModel);
     }
 
     private void initViewModelObservations() {
-        mViewModel.timeCameLiveData.observe(this, data ->
-                binding.activityMainCameTextInputEditText.setText(data));                            //Пришел:
-        mViewModel.timeGoneLiveData.observe(this, data ->
-                binding.activityMainGoneTextInputEditText.setText(data));                            //Ушел
-        mViewModel.dateLiveData.observe(this, data -> {                                        //Дата
-                    if (data.equals(TimeUtils.getCurrentDateNormalFormat()))
-                        binding.activityMainDayTextInputEditText
-                                .setTextColor(getResources().getColor(R.color.colorPrimary));
-                    else binding.activityMainDayTextInputEditText
-                            .setTextColor(getResources().getColor(R.color.colorGrey));
-                    binding.activityMainDayTextInputEditText.setText(data);
-                }
-        );
-        mViewModel.dayOfWeekLiveData.observe(this, data ->
-                binding.activityMainDayTextInputLayout.setHint(data));                               //День недели
-        mViewModel.timeWasOnWorkLiveData.observe(this, data ->
-                binding.activityMainTimeWasOnWorkTextInputEditText.setText(data));                   //Был на работе
-        mViewModel.timeLeftToWorkTodayLiveData.observe(this, data ->
-                binding.activityMainTimeLeftToWorkTextInputEditText.setText(data));                  //Осталось работать
-        mViewModel.dayLiveData.observe(this, data -> day = data);                              //День,  для DatePickerDialog
-        mViewModel.monthLiveData.observe(this, data -> month = data - 1);                      //Месяц для DatePickerDialog
-        mViewModel.yearLiveData.observe(this, data -> year = data);                            // Год для DatePickerDialog
-        mViewModel.isGoneTimeExistLiveData.observe(this, isGoneTimeExist -> {
-            binding.activityMainGoneTextInputLayout.setEndIconVisible(isGoneTimeExist);
-            if (isGoneTimeExist) {
-                binding.activityMainGoneTextInputEditText
-                        .setTextColor(getResources().getColor(R.color.colorAccent));
-                binding.activityMainTimeWasOnWorkTextInputEditText
+        mViewModel.containerLiveData.observe(this, dataContainer -> {
+            binding.mainEditCame.setText(dataContainer.timeCame);
+            binding.mainEditGone.setText(dataContainer.timeGone);
+            if (dataContainer.date != null && dataContainer.date.equals(TimeUtils.getCurrentDateNormalFormat()))
+                binding.mainEditDate
                         .setTextColor(getResources().getColor(R.color.colorPrimary));
-            } else {
-                binding.activityMainGoneTextInputEditText
-                        .setTextColor(getResources().getColor(R.color.colorLightGrey));
-                binding.activityMainTimeWasOnWorkTextInputEditText
-                        .setTextColor(getResources().getColor(R.color.colorLightGrey));
+            else binding.mainEditDate
+                    .setTextColor(getResources().getColor(R.color.colorGrey));
+            binding.mainEditDate.setText(dataContainer.date);
+            binding.mainTextInputLayoutDate.setHint(dataContainer.dayOfWeek);
+            binding.mainEditTimeWasOnWork.setText(dataContainer.timeWasOnWork);
+            binding.mainEditTimeLeftToWork.setText(dataContainer.timeLeftToWorkToday);
+            day = dataContainer.day;
+            month = dataContainer.month;
+            year = dataContainer.year;
+            if (dataContainer.isGoneTimeExist != null) {
+                binding.mainTextInputLayoutGone.setEndIconVisible(dataContainer.isGoneTimeExist);
+                if (dataContainer.isGoneTimeExist) {
+                    binding.mainEditGone
+                            .setTextColor(getResources().getColor(R.color.colorAccent));
+                    binding.mainEditTimeWasOnWork
+                            .setTextColor(getResources().getColor(R.color.colorPrimary));
+                } else {
+                    binding.mainEditGone
+                            .setTextColor(getResources().getColor(R.color.colorLightGrey));
+                    binding.mainEditTimeWasOnWork
+                            .setTextColor(getResources().getColor(R.color.colorLightGrey));
+                }
             }
+            binding.mainTextWorkedHoursSumValue.setText(dataContainer.workedHoursSum);
         });
-        mViewModel.workedHoursSumLiveData.observe(this, data ->
-                binding.activityMainWorkedHoursSumTextView2.setText(data));
     }
 
     private void initGoneTextInputLayoutEndIconClickListener() {
-        binding.activityMainGoneTextInputLayout
+        binding.mainTextInputLayoutGone
                 .setEndIconOnClickListener(v -> mViewModel.setGoneTime(null));
     }
 
     private void initCameTextInputLayoutEndIconClickListener() {
-        binding.activityMainCameTextInputLayout
+        binding.mainTextInputLayoutCame
                 .setEndIconOnClickListener(v -> mViewModel.setCameTime(null));
     }
 
     public void initPreviousDayBtnClickListener() {
-        binding.activityMainPreviousDayBtn.setOnClickListener(v -> mViewModel.setPreviousDay());
+        binding.mainBtnPreviousDay.setOnClickListener(v -> mViewModel.setPreviousDay());
     }
 
     public void initNextDayBtnClickListener() {
-        binding.activityMainNextDayBtn.setOnClickListener(v -> mViewModel.setNextDay());
+        binding.mainBtnNextDay.setOnClickListener(v -> mViewModel.setNextDay());
     }
 
     public void initCameBtnClickListener() {
@@ -143,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initCameEditTextClickListener() {
-        binding.activityMainCameTextInputEditText.setOnClickListener(v -> {
+        binding.mainEditCame.setOnClickListener(v -> {
             TimePickerDialog tpd = new TimePickerDialog(this,
                     (view, hourOfDay, minuteOfDay) ->
                             mViewModel.setCameTime(TimeUtils.getTime(hourOfDay, minuteOfDay))
@@ -153,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initGoneEditTextClickListener() {
-        binding.activityMainGoneTextInputEditText.setOnClickListener(v -> {
+        binding.mainEditGone.setOnClickListener(v -> {
             TimePickerDialog tpd = new TimePickerDialog(this,
                     (view, hourOfDay, minuteOfDay) ->
                             mViewModel.setGoneTime(TimeUtils.getTime(hourOfDay, minuteOfDay)),
@@ -163,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initDayEditTextClickListener() {
-        binding.activityMainDayTextInputEditText.setOnClickListener(v -> showDatePickerDialog());
+        binding.mainEditDate.setOnClickListener(v -> showDatePickerDialog());
     }
 
     private void showDatePickerDialog() {

@@ -27,8 +27,7 @@ import nightgoat.timesheet.BuildConfig;
 import nightgoat.timesheet.R;
 import nightgoat.timesheet.databinding.ActivitySettingsBinding;
 import nightgoat.timesheet.di.AppComponent;
-import nightgoat.timesheet.di.DaggerActivityComponent;
-import nightgoat.timesheet.di.InteractorModule;
+import nightgoat.timesheet.di.DaggerSettingsActivityComponent;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -136,10 +135,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void initViewModel() {
         AppComponent component = ((App) getApplication()).getAppComponent();
-        DaggerActivityComponent.builder()
+        DaggerSettingsActivityComponent.builder()
                 .setActivity(this)
                 .setDependencies(component)
-                .interactorModule(new InteractorModule())
                 .build()
                 .inject(this);
         getLifecycle().addObserver(mViewModel);

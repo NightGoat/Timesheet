@@ -8,29 +8,15 @@ import dagger.Provides;
 import nightgoat.timesheet.IResourceHolder;
 import nightgoat.timesheet.domain.Interactor;
 import nightgoat.timesheet.presentation.ViewModelFactory;
-import nightgoat.timesheet.presentation.list.ListViewModel;
 import nightgoat.timesheet.presentation.main.DaysViewModel;
-import nightgoat.timesheet.presentation.settings.SettingsViewModel;
 
 @Module
-class ActivityModule {
-
-    @Provides
-    ListViewModel provideListViewModel(AppCompatActivity activity, ViewModelFactory factory) {
-        return new ViewModelProvider(activity, factory)
-                .get(ListViewModel.class);
-    }
+class MainActivityModule {
 
     @Provides
     DaysViewModel provideDaysViewModel(AppCompatActivity activity, ViewModelFactory factory) {
         return new ViewModelProvider(activity, factory)
                 .get(DaysViewModel.class);
-    }
-
-    @Provides
-    SettingsViewModel provideSettingsViewModel(AppCompatActivity activity, ViewModelFactory factory) {
-        return new ViewModelProvider(activity, factory)
-                .get(SettingsViewModel.class);
     }
 
     @Provides
