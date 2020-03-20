@@ -1,10 +1,5 @@
 package nightgoat.timesheet.presentation.settings;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.Manifest;
 import android.app.TimePickerDialog;
 import android.content.ActivityNotFoundException;
@@ -14,7 +9,10 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
@@ -26,28 +24,22 @@ import javax.inject.Inject;
 
 import nightgoat.timesheet.App;
 import nightgoat.timesheet.BuildConfig;
-import nightgoat.timesheet.IResourceHolder;
 import nightgoat.timesheet.R;
 import nightgoat.timesheet.databinding.ActivitySettingsBinding;
 import nightgoat.timesheet.di.AppComponent;
-import nightgoat.timesheet.di.DaggerAcitivityComponent;
+import nightgoat.timesheet.di.DaggerActivityComponent;
 import nightgoat.timesheet.di.InteractorModule;
-import nightgoat.timesheet.domain.Interactor;
-import nightgoat.timesheet.presentation.ISnackBarMaker;
-import nightgoat.timesheet.presentation.ViewModelFactory;
 
-public class SettingsActivity extends AppCompatActivity implements ISnackBarMaker {
+public class SettingsActivity extends AppCompatActivity {
 
     private ActivitySettingsBinding binding;
-    private SettingsViewModel mViewModel;
     private File excelFile;
+
+    @SuppressWarnings("unused")
     private final String TAG = SettingsActivity.class.getName();
 
     @Inject
-    Interactor interactor;
-
-    @Inject
-    IResourceHolder resourceHolder;
+    SettingsViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,28 +50,38 @@ public class SettingsActivity extends AppCompatActivity implements ISnackBarMake
         initToolbar();
         initNeedToBeOnWorkListener();
         initCleanDBListener();
-        mViewModel.isOpenExcelFileBtnEnabled.observe(this, aBoolean -> binding.settingsOpenExcelBtn.setEnabled(aBoolean));
-        mViewModel.isProgressBarVisible.observe(this, aBoolean -> {
-            if (aBoolean) binding.settingsProgressBar.setVisibility(View.VISIBLE);
-            else binding.settingsProgressBar.setVisibility(View.INVISIBLE);
-        });
-        mViewModel.excelFileLD.observe(this, file -> excelFile = file);
+        initViewModelObservations();
         binding.settingsSaveDBtoExcelBtn.setOnClickListener(v -> saveDBtoExcel());
         binding.settingsOpenExcelBtn.setOnClickListener(v -> openExcelFile());
         mViewModel.checkIsExcelFileExists();
     }
 
+    private void initViewModelObservations() {
+        mViewModel.isOpenExcelFileBtnEnabled.observe(this, aBoolean ->
+                binding.settingsOpenExcelBtn.setEnabled(aBoolean));
+        mViewModel.isProgressBarVisible.observe(this, aBoolean -> {
+            if (aBoolean) binding.settingsProgressBar.setVisibility(View.VISIBLE);
+            else binding.settingsProgressBar.setVisibility(View.INVISIBLE);
+        });
+        mViewModel.excelFileLD.observe(this, file -> excelFile = file);
+        mViewModel.snackBarMessageActionLiveData.observe(this, this::showSnackBarWithOpenBtn);
+        mViewModel.snackBarMessageLiveData.observe(this, this::showSnackBar);
+    }
+
     void saveDBtoExcel() {
-        if (ActivityCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (ActivityCompat.checkSelfPermission(
+                SettingsActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
-        mViewModel.saveDBtoExcel();
+            mViewModel.saveDBtoExcel();
         } else {
-            ActivityCompat.requestPermissions(SettingsActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            ActivityCompat.requestPermissions(
+                    SettingsActivity.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             saveDBtoExcel();
         }
     }
 
-    void openExcelFile(){
+    void openExcelFile() {
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             Uri uri = FileProvider.getUriForFile(SettingsActivity.this,
@@ -89,7 +91,7 @@ public class SettingsActivity extends AppCompatActivity implements ISnackBarMake
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             startActivity(intent);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(this, getString(R.string.noExcelApp), Toast.LENGTH_SHORT).show();
+            showSnackBar(getString(R.string.noExcelApp));
         }
     }
 
@@ -106,11 +108,14 @@ public class SettingsActivity extends AppCompatActivity implements ISnackBarMake
 
     private void initNeedToBeOnWorkListener() {
         SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
-        binding.settingsNeedToBeOnWorkValueTV.setText(sharedPreferences.getString("needToWork", "8:30"));
+        binding.settingsNeedToBeOnWorkValueTV.setText(
+                sharedPreferences.getString("needToWork", "8:30"));
         binding.settingsNeedToBeOnWorkValueTV.setOnClickListener(v -> {
             TimePickerDialog tpd = new TimePickerDialog(this,
                     (view, hourOfDay, minuteOfDay) -> {
-                        String time = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minuteOfDay);
+                        String time = String.format(
+                                Locale.getDefault(),
+                                "%02d:%02d", hourOfDay, minuteOfDay);
                         sharedPreferences
                                 .edit()
                                 .putString("needToWork", time)
@@ -130,22 +135,25 @@ public class SettingsActivity extends AppCompatActivity implements ISnackBarMake
     }
 
     private void initViewModel() {
-        AppComponent component = ((App)getApplication()).getAppComponent();
-        DaggerAcitivityComponent.builder()
-                .appComponent(component)
+        AppComponent component = ((App) getApplication()).getAppComponent();
+        DaggerActivityComponent.builder()
+                .setActivity(this)
+                .setDependencies(component)
                 .interactorModule(new InteractorModule())
                 .build()
                 .inject(this);
-        ViewModelFactory mViewModelFactory = new ViewModelFactory(interactor, resourceHolder);
-        mViewModel = new ViewModelProvider(this, mViewModelFactory).get(SettingsViewModel.class);
         getLifecycle().addObserver(mViewModel);
-        mViewModel.setSnackBarMaker(this);
     }
 
-    @Override
-    public void createSnackBar(String text) {
+    public void showSnackBar(String text) {
         Snackbar.make(binding.settingsNeedToBeOnWorkValueTV,
-                 text, Snackbar.LENGTH_LONG)
+                text, Snackbar.LENGTH_LONG)
+                .show();
+    }
+
+    public void showSnackBarWithOpenBtn(String text) {
+        Snackbar.make(binding.settingsNeedToBeOnWorkValueTV,
+                text, Snackbar.LENGTH_LONG)
                 .setAction(getString(R.string.open), v -> openExcelFile()).show();
     }
 }

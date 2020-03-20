@@ -33,8 +33,9 @@ public abstract class DaysDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(
                             context.getApplicationContext(),
                             DaysDatabase.class,
-                            "days_database.db"
-                    ).addMigrations(MIGRATION_1_2).build();
+                            "days_database.db")
+                            .addMigrations(MIGRATION_1_2)
+                            .build();
                 }
             }
         }

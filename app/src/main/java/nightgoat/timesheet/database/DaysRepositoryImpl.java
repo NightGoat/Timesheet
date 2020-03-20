@@ -1,19 +1,18 @@
 package nightgoat.timesheet.database;
 
-import android.util.Log;
-
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.List;
+import java.util.Locale;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import nightgoat.timesheet.domain.DaysRepository;
+import timber.log.Timber;
 
 public class DaysRepositoryImpl implements DaysRepository {
 
@@ -25,23 +24,33 @@ public class DaysRepositoryImpl implements DaysRepository {
         this.daysDao = daysDao;
     }
 
+    @Override
     public Flowable<List<DayEntity>> getAllDays() {
         return daysDao.getAllDays();
     }
 
+    @Override
+    public Flowable<List<DayEntity>> getAllDays(int month, int year) {
+        return daysDao.getAllDays(String.format(Locale.getDefault(),"%02d", month), String.valueOf(year));
+    }
+
+    @Override
     public Completable addDay(DayEntity model) {
         return daysDao.insertDay(model);
     }
 
+    @Override
     public Completable updateDay(DayEntity model) {
         model.setTimeWorked(countComeGoneDifference(model));
         return daysDao.updateDay(model);
     }
 
+    @Override
     public Maybe<DayEntity> getDayByDayModel(String date) {
         return daysDao.getDayByDate(date);
     }
 
+    @Override
     public Completable deleteDaysWithoutTime() {
         return daysDao.deleteDaysWithoutTime();
     }
@@ -57,20 +66,15 @@ public class DaysRepositoryImpl implements DaysRepository {
     }
 
     @Override
-    public Flowable<List<DayEntity>> getDaysWorkedTimeNonNull(int month, int year) {
-        return daysDao.getDaysWorkedTimeNonNull(month, year);
-    }
-
-    @Override
-    public Flowable<String> getWorkedHoursSum(String month, String year) {
-        Log.d("DaysRepositoryImpl", "getWorkedHoursSum: ");
-        return daysDao.getWorkedHoursSum(month, year);
+    public Flowable<List<String>> getWorkedHoursSumList(String month, String year) {
+        Timber.tag(TAG).d("getWorkedHoursSum: ");
+        return daysDao.getWorkedHoursSumList(month, year);
     }
 
     private String countComeGoneDifference(DayEntity dayEntity) {
-        String timeCome = dayEntity.getTimeCome();
+        String timeCome = dayEntity.getTimeCame();
         String timeGone = dayEntity.getTimeGone();
-        Log.d("DaysViewModel", "countComeGoneDifference: ");
+        Timber.tag(TAG).d("countComeGoneDifference: ");
         DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm");
         if (timeCome != null && timeGone != null) {
             DateTime comeTimeDT = DateTime.parse(timeCome, formatter);
@@ -81,7 +85,7 @@ public class DaysRepositoryImpl implements DaysRepository {
                 return null;
             }
         } else {
-            Log.e(TAG, "ERROR counting difference because timeCome is: " + timeCome + " and timeGone is: " + timeGone);
+            Timber.tag(TAG).e("ERROR counting difference because timeCome is: " + timeCome + " and timeGone is: " + timeGone);
             return null;
         }
     }

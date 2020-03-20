@@ -7,31 +7,70 @@
     tools:context=".presentation.list.ListActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/toolbar_layout"
+        android:id="@+id/list_toolbar_layout"
+        style="@style/Widget.MaterialComponents.Toolbar.Surface"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        style="@style/Widget.MaterialComponents.Toolbar.Surface">
+        app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/list_activity_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/list_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <HorizontalScrollView
+        android:id="@+id/list_scroll_month"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/list_toolbar_layout"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/list_chipGroup_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleLine="true"
+            app:singleSelection="true"
+            />
+
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:id="@+id/list_scroll_year"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/list_scroll_month"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/list_chipGroup_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleLine="true"
+            app:singleSelection="true" />
+
+    </HorizontalScrollView>
+
     <EditText
+        android:visibility="gone"
         android:id="@+id/list_activity_EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="date"
+        android:layout_margin="8dp"
+        android:autofillHints="@string/search"
         android:hint="@string/search"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
-        android:layout_margin="4dp"
-        android:autofillHints="@string/search" />
+        android:inputType="date"
+        app:layout_constraintTop_toBottomOf="@id/list_scroll_year" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_activity_recyclerView"
@@ -39,6 +78,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/list_activity_EditText" />
+        app:layout_constraintTop_toBottomOf="@id/list_activity_EditText"
+        tools:listitem="@layout/card_day"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

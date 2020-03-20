@@ -1,38 +1,47 @@
-package nightgoat.timesheet;
-
-import android.util.Log;
+package nightgoat.timesheet.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
-import org.joda.time.Duration;
-import org.joda.time.Interval;
 import org.joda.time.Period;
-import org.joda.time.PeriodType;
-import org.joda.time.ReadablePeriod;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.PeriodFormat;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
-import org.joda.time.format.PeriodPrinter;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class TimeUtils {
+import timber.log.Timber;
 
+public abstract class TimeUtils {
+
+    private static final String TAG = TimeUtils.class.getName();
     private static Calendar calendar = Calendar.getInstance();
-
-    public static int getCurrentDay() {
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        return calendar.get(Calendar.DAY_OF_MONTH);
-    }
 
     public static int getCurrentMonth() {
         calendar.setTimeInMillis(System.currentTimeMillis());
-        return calendar.get(Calendar.MONTH);
+        return calendar.get(Calendar.MONTH)+1;
+    }
+
+    public static String getMonthString(String month){
+        DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("MM");
+        DateTime dt = sqlFormat.parseDateTime(month);
+        Timber.d("getMonthString: month: %s, string: %s",
+                month,
+                StringUtils.capitalize(dt.monthOfYear().getAsText(Locale.getDefault())));
+        return StringUtils.capitalize(dt.monthOfYear().getAsText(Locale.getDefault()));
+    }
+
+    public static String getMonthStringShort(String month){
+        DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("M");
+        DateTime dt = sqlFormat.parseDateTime(month);
+        return dt.toString("MMM", Locale.getDefault());
+    }
+
+    public static int getMonthInt(String month){
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("MMM").withLocale(Locale.getDefault());
+        DateTime dt = formatter.parseDateTime(month);
+        return dt.getMonthOfYear();
     }
 
     public static int getCurrentYear() {
@@ -63,6 +72,11 @@ public class TimeUtils {
         return sqlFormat.print(System.currentTimeMillis());
     }
 
+    public static String getCurrentDateNormalFormat(){
+        DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("dd.MM.yyyy");
+        return sqlFormat.print(System.currentTimeMillis());
+    }
+
     public static String getDateInNormalFormat(String sqlDate){
         DateTimeFormatter normalFormat = DateTimeFormat.forPattern("dd.MM.yyyy");
         DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
@@ -76,7 +90,14 @@ public class TimeUtils {
         return StringUtils.capitalize(sqlDateTime.dayOfWeek().getAsText(Locale.getDefault()));
     }
 
-    public static String countTimeSum(String time1, String time2){
+    public static String getDayOfTheWeekShort(String sqlDate){
+        DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
+        DateTimeFormatter dayOfWeekFormat = DateTimeFormat.forPattern("E");
+        DateTime sqlDateTime = sqlFormat.parseDateTime(sqlDate);
+        return dayOfWeekFormat.print(sqlDateTime);
+    }
+
+    public static String countTimeSum24(String time1, String time2){
         PeriodFormatter formatter = new PeriodFormatterBuilder()
                 .minimumPrintedDigits(2)
                 .printZeroAlways()
@@ -93,9 +114,27 @@ public class TimeUtils {
         if (period3.getHours() >= 24) {
             period3 = period3.minusHours(24);
         }
-        String result = formatter.print(period3);
-        Log.d("TimeUtils", "countTimeSum: result: " + result);
-        return result;
+        Timber.tag(TAG).i("time1(%s) + time2(%s) = %s", time1, time2, formatter.print(period3));
+        return formatter.print(period3);
+    }
+
+    public static String countTimeSum(String time1, String time2){
+
+        PeriodFormatter formatter = new PeriodFormatterBuilder()
+                .minimumPrintedDigits(2)
+                .printZeroAlways()
+                .appendHours()
+                .appendLiteral(":")
+                .appendMinutes()
+                .toFormatter();
+        Period period1 = formatter.parsePeriod(time1);
+        Period period2 = formatter.parsePeriod(time2);
+        Period period3 = period1.plus(period2);
+        if (period3.getMinutes() >= 60){
+            period3 = period3.plusHours(1).minusMinutes(60);
+        }
+        Timber.tag(TAG).i("time1(%s) + time2(%s) = %s", time1, time2, formatter.print(period3));
+        return formatter.print(period3);
     }
 
     public static String countTimeDiff(String time1, String time2){
@@ -113,8 +152,7 @@ public class TimeUtils {
         if (period.getMinutes() < 0) {
             period = period.withMinutes(period.getMinutes()*-1);
         }
-        String result = formatter.print(period);
-        Log.d("TimeUtils", "countTimeDiff: result: " + result);
-        return result;
+        return formatter.print(period);
     }
+
 }

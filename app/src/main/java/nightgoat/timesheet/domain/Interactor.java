@@ -7,6 +7,7 @@ import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.schedulers.Schedulers;
 import nightgoat.timesheet.database.DayEntity;
+import nightgoat.timesheet.utils.TimeUtils;
 
 public class Interactor {
 
@@ -18,6 +19,10 @@ public class Interactor {
 
     public Flowable<List<DayEntity>> getAllDays() {
         return daysDataSource.getAllDays().subscribeOn(Schedulers.io());
+    }
+
+    public Flowable<List<DayEntity>> getAllDays(int month, int year) {
+        return daysDataSource.getAllDays(month, year).subscribeOn(Schedulers.io());
     }
 
     public Completable addDay(DayEntity model) {
@@ -45,6 +50,15 @@ public class Interactor {
     }
 
     public Flowable<String> getWorkedHoursSum(String month, String year){
-        return daysDataSource.getWorkedHoursSum(month, year).subscribeOn(Schedulers.io());
+        return daysDataSource
+                .getWorkedHoursSumList(month, year)
+                .subscribeOn(Schedulers.io())
+                .map(strings -> {
+            String sum = "00:00";
+            for (int i = 0; i < strings.size(); i++) {
+                sum = TimeUtils.countTimeSum(sum, strings.get(i));
+            }
+            return sum;
+        });
     }
 }

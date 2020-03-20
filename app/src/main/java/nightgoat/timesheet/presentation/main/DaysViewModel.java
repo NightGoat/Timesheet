@@ -1,16 +1,12 @@
 package nightgoat.timesheet.presentation.main;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModel;
-
-import com.orhanobut.logger.AndroidLogAdapter;
-import com.orhanobut.logger.Logger;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
@@ -25,26 +21,28 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import nightgoat.timesheet.IResourceHolder;
-import nightgoat.timesheet.TimeUtils;
+import nightgoat.timesheet.utils.TimeUtils;
 import nightgoat.timesheet.database.DayEntity;
 import nightgoat.timesheet.domain.Interactor;
+import timber.log.Timber;
 
 public class DaysViewModel extends ViewModel implements LifecycleObserver {
 
     private final String TAG = DaysViewModel.class.getName();
 
-    MutableLiveData<String> timeComeLD = new MutableLiveData<>();
-    MutableLiveData<String> timeGoneLD = new MutableLiveData<>();
-    MutableLiveData<String> dateLD = new MutableLiveData<>();
-    MutableLiveData<String> timeDifferenceLD = new MutableLiveData<>();
-    MutableLiveData<String> timeLeftToWorkTodayLD = new MutableLiveData<>();
-    MutableLiveData<String> dayOfWeek = new MutableLiveData<>();
-    MutableLiveData<Integer> dayLD = new MutableLiveData<>();
-    MutableLiveData<Integer> monthLD = new MutableLiveData<>();
-    MutableLiveData<Integer> yearLD = new MutableLiveData<>();
-    MutableLiveData<Boolean> isGoneTimeExistLD = new MutableLiveData<>();
-    MutableLiveData<String> workedHoursSumLD = new MutableLiveData<>();
+    MutableLiveData<String> timeCameLiveData = new MutableLiveData<>();
+    MutableLiveData<String> timeGoneLiveData = new MutableLiveData<>();
+    MutableLiveData<String> dateLiveData = new MutableLiveData<>();
+    MutableLiveData<String> timeWasOnWorkLiveData = new MutableLiveData<>();
+    MutableLiveData<String> timeLeftToWorkTodayLiveData = new MutableLiveData<>();
+    MutableLiveData<String> dayOfWeekLiveData = new MutableLiveData<>();
+    MutableLiveData<Integer> dayLiveData = new MutableLiveData<>();
+    MutableLiveData<Integer> monthLiveData = new MutableLiveData<>();
+    MutableLiveData<Integer> yearLiveData = new MutableLiveData<>();
+    MutableLiveData<Boolean> isGoneTimeExistLiveData = new MutableLiveData<>();
+    MutableLiveData<String> workedHoursSumLiveData = new MutableLiveData<>();
     private final CompositeDisposable mDisposable = new CompositeDisposable();
 
     private List<DayEntity> days;
@@ -58,6 +56,11 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
     private String timeDifference;
     private DayEntity dayEntity;
     private IResourceHolder resourceHolder;
+    private int cachedMonth;
+    private int cachedYear;
+    private int month;
+    private int year;
+    private Disposable workedHoursDisposable;
 
     public DaysViewModel(Interactor interactor, IResourceHolder resourceHolder) {
         this.interactor = interactor;
@@ -68,13 +71,12 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
                 .subscribe(v -> {
                     currentTime = TimeUtils.getCurrentTime();
                     countComeGoneDifference();
-                }, e -> Log.d("DaysViewModel", "interval error: " + e.getMessage())));
+                }, e -> Timber.tag(TAG).d("interval error: %s", e.getMessage())));
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     void onStart() {
-        Logger.addLogAdapter(new AndroidLogAdapter());
-        Log.d("DaysViewModel", "onStart: ");
+        Timber.tag(TAG).d("onStart: ");
         getDate();
         timeNeedToWork = resourceHolder.getTimeNeedToWorkFromPreferences();
         mDisposable.add(
@@ -84,31 +86,34 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
                             days = dayEntities;
                             getDayEntity(date);
 
-                        }, throwable -> Log.d("DaysViewModel", "onStart: error with list: " + throwable.getMessage())));
+                        }, throwable -> Timber.tag(TAG).d("onStart: error with list: %s",
+                                throwable.getMessage())));
     }
 
     void getDayEntity(String date) {
-        this.date = date;
-        Log.d("DaysViewModel", "getDayEntity: date: " + date);
+        Timber.d("getDayEntity: date: %s", date);
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
         DateTime dt = dateTimeFormatter.parseDateTime(date);
         calendar.setTime(dt.toDate());
+        getDate();
         dayEntity = new DayEntity(date);
         if (days.contains(dayEntity)) {
             for (DayEntity day : days) {
                 if (day.equals(dayEntity)) dayEntity = day;
             }
         } else addDay();
-        timeCome = dayEntity.getTimeCome();
+        timeCome = dayEntity.getTimeCame();
         timeGone = dayEntity.getTimeGone();
         timeDifference = dayEntity.getTimeWorked();
-        Log.d("DaysViewModel", "DayEntity timeCome: " + timeCome + " timeGone: " + timeGone + " timeDifference: " + timeDifference);
-        timeComeLD.postValue(timeCome);
-        timeGoneLD.postValue(timeGone);
+        Timber.tag(TAG).d(
+                "DayEntity timeCame: %s, timeGone: %s, timeDifference: %s",
+                timeCome, timeGone, timeDifference);
+        timeCameLiveData.postValue(timeCome);
+        timeGoneLiveData.postValue(timeGone);
         countComeGoneDifference();
         countTimeCanGoHome();
-        dateLD.postValue(TimeUtils.getDateInNormalFormat(date));
-        dayOfWeek.postValue(TimeUtils.getDayOfTheWeek(date));
+        dateLiveData.postValue(TimeUtils.getDateInNormalFormat(date));
+        dayOfWeekLiveData.postValue(TimeUtils.getDayOfTheWeek(date));
     }
 
     void setPreviousDay() {
@@ -123,8 +128,8 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
         getDayEntity(date);
     }
 
-    void setComeTime(String time) {
-        dayEntity.setTimeCome(time);
+    void setCameTime(String time) {
+        dayEntity.setTimeCame(time);
         mDisposable.add(
                 interactor.updateDay(dayEntity)
                         .subscribe());
@@ -137,48 +142,57 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
                         .subscribe());
     }
 
-
     private void addDay() {
-        Log.d("DaysViewModel", "addDay: " + dayEntity.getDate());
+        Timber.tag(TAG).d("addDay: %s, month: %d, year: %d", dayEntity.getDate(), month, year);
         mDisposable.add(interactor.addDay(dayEntity)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> Log.e(TAG, "Added day")));
+                .subscribe(() -> Timber.e("Added day")));
     }
 
     private void getDate() {
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int month = calendar.get(Calendar.MONTH) + 1;
-        int year = calendar.get(Calendar.YEAR);
-        getWorkedHoursSum(month, year);
-        dayLD.postValue(day);
-        monthLD.postValue(month);
-        yearLD.postValue(year);
+        month = calendar.get(Calendar.MONTH) + 1;
+        year = calendar.get(Calendar.YEAR);
+        Timber.tag(TAG).i("getDate: month: %d - cached month: %d, year: %d, cached year: %d", month, cachedMonth, year, cachedYear);
+        if ((cachedMonth == 0 && cachedYear == 0) || (cachedMonth != month || cachedYear != year)) {
+            cachedMonth = month;
+            cachedYear = year;
+            getWorkedHoursSum(month, year);
+            Timber.tag(TAG).i("getDate: in if statement");
+        }
+        dayLiveData.postValue(day);
+        monthLiveData.postValue(month);
+        yearLiveData.postValue(year);
         date = String.format(Locale.getDefault(), "%d-%02d-%02d", year, month, day);
     }
 
     @SuppressLint("DefaultLocale")
     private void getWorkedHoursSum(int month, int year) {
-        Log.d("DaysViewModel", "getWorkedHoursSum: " + String.format("%02d", month) + " " + year);
-        mDisposable.add(interactor.getWorkedHoursSum(String.format("%02d", month), String.valueOf(year))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(sum -> {
-                            Log.d("DaysViewModel", "getWorkedHoursSum: " + sum);
-                            workedHoursSumLD.setValue("Отработано в этом месяце: " + sum);
-                        },
-                        throwable -> Log.e("DaysViewModel", "getWorkedHoursSum: ERROR" + throwable.getMessage()),
-                        () -> Log.d("DaysViewModel", "getWorkedHoursSum: onComplete"),
-                        subscription -> Log.d("DaysViewModel", "getWorkedHoursSum: subscription" + subscription.toString())));
+        Timber.tag(TAG).d("getWorkedHoursSum: " + String.format("%02d", month) + " " + year);
+        if (workedHoursDisposable != null) workedHoursDisposable.dispose();
+        workedHoursDisposable =
+                interactor.getWorkedHoursSum(String.format("%02d", month), String.valueOf(year))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                sum -> {
+                                    Timber.tag(TAG).i("getWorkedHoursSum: sum: %s", sum);
+                                    workedHoursSumLiveData.setValue(sum);
+                                },
+                                throwable ->
+                                        Timber.tag(TAG)
+                                                .e("getWorkedHoursSum: ERROR: %s", throwable.getMessage()),
+                                () -> Timber.d("getWorkedHoursSum: onComplete"));
+        mDisposable.add(workedHoursDisposable);
     }
 
     void deleteEmptyEntities() {
-        Log.w(TAG, "Deleting all empty entities");
+        Timber.tag(TAG).w("Deleting all empty entities");
         interactor.deleteDaysWithoutTime()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
     }
 
     private void countComeGoneDifference() {
-        // Log.d("DaysViewModel", "countComeGoneDifference: ");
         DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm");
         if (timeCome != null && timeDifference == null) {
             DateTime comeTimeDT = DateTime.parse(timeCome, formatter);
@@ -187,36 +201,35 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
                 timeDifference = formatter.print(new Duration(comeTimeDT, nowTimeDT).getMillis());
             }
         }
-        timeDifferenceLD.postValue(timeDifference);
+        timeWasOnWorkLiveData.postValue(timeDifference);
         countTimeLeftToWorkToday();
     }
 
     private void countTimeLeftToWorkToday() {
         if (timeDifference != null) {
-            timeLeftToWorkTodayLD.postValue(TimeUtils.countTimeDiff(timeNeedToWork, timeDifference));
+            timeLeftToWorkTodayLiveData
+                    .postValue(TimeUtils.countTimeDiff(timeNeedToWork, timeDifference));
         } else {
-            timeLeftToWorkTodayLD.postValue(null);
+            timeLeftToWorkTodayLiveData.postValue(null);
         }
     }
 
     private void countTimeCanGoHome() {
-        // Logger.d(" countTimeCanGoHome() timeCome: %s timeGone: %s timeCanGoHomeAt: %s", timeCome, timeGone, timeCanGoHomeAt);
         if (timeCome != null && timeGone == null) {
-            String timeCanGoHomeAt = TimeUtils.countTimeSum(timeCome, timeNeedToWork);
-            timeGoneLD.postValue(timeCanGoHomeAt);
-            isGoneTimeExistLD.postValue(false);
+            String timeCanGoHomeAt = TimeUtils.countTimeSum24(timeCome, timeNeedToWork);
+            timeGoneLiveData.postValue(timeCanGoHomeAt);
+            isGoneTimeExistLiveData.postValue(false);
         } else if (timeCome != null) {
-            isGoneTimeExistLD.postValue(true);
+            isGoneTimeExistLiveData.postValue(true);
         } else if (timeGone != null) {
-            timeComeLD.postValue(null);
-            isGoneTimeExistLD.postValue(true);
+            timeCameLiveData.postValue(null);
+            isGoneTimeExistLiveData.postValue(true);
         } else {
-            timeGoneLD.postValue(null);
-            timeComeLD.postValue(null);
-            isGoneTimeExistLD.postValue(false);
+            timeGoneLiveData.postValue(null);
+            timeCameLiveData.postValue(null);
+            isGoneTimeExistLiveData.postValue(false);
         }
     }
-
 
     @Override
     protected void onCleared() {
@@ -224,5 +237,4 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
         mDisposable.clear();
         super.onCleared();
     }
-
 }

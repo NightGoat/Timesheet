@@ -34,14 +34,6 @@ public class ResourceHolder implements IResourceHolder {
     }
 
     @Override
-    public void setTimeNeedToWorkFromPreferences(String time) {
-        sharedPreferences
-                .edit()
-                .putString("needToWork", time)
-                .apply();
-    }
-
-    @Override
     public String getString(int resource) {
         return context.getString(resource);
     }

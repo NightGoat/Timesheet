@@ -17,4 +17,21 @@
     <string name="cancel">Cancel</string>
     <string name="open">Open</string>
     <string name="saved">Successfully saved in: </string>
+    <string name="error">Error:</string>
+    <string name="timeMonth">Time worked this month:</string>
+
+    <string-array name="month">
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
 </resources>

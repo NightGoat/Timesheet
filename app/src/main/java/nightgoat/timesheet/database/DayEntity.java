@@ -6,7 +6,6 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-
 import java.util.Objects;
 
 @Entity(tableName = "days", indices = {@Index(value = {"date", "time_come", "time_gone"})})
@@ -18,13 +17,14 @@ public class DayEntity {
     private String date;
 
     @ColumnInfo(name = "time_come")
-    private String timeCome;
+    private String timeCame;
 
     @ColumnInfo(name = "time_gone")
     private String timeGone;
 
     @ColumnInfo(name = "worked_time")
     private String timeWorked;
+
 
     public DayEntity(@NonNull String date) {
         this.date = date;
@@ -48,8 +48,8 @@ public class DayEntity {
         return date;
     }
 
-    public String getTimeCome() {
-        return timeCome;
+    public String getTimeCame() {
+        return timeCame;
     }
 
     public String getTimeGone() {
@@ -60,31 +60,15 @@ public class DayEntity {
         return timeWorked;
     }
 
-    public void setTimeWorked(String timeWorked) {
+    void setTimeWorked(String timeWorked) {
         this.timeWorked = timeWorked;
     }
 
-    public void setDate(int day, int month, int year) {
-        this.date = day+"."+month+"."+"year";
-    }
-
-    public void setDate(@NonNull String date) {
-        this.date = date;
-    }
-
-    public void setTimeCome(String timeCome) {
-        this.timeCome = timeCome;
-    }
-
-    public void setTimeCome(int hour, int minute) {
-        this.timeCome = hour+":"+minute;
+    public void setTimeCame(String timeCame) {
+        this.timeCame = timeCame;
     }
 
     public void setTimeGone(String timeGone) {
         this.timeGone = timeGone;
-    }
-
-    public void setTimeGone(int hour, int minute) {
-        this.timeGone = hour+":"+minute;
     }
 }

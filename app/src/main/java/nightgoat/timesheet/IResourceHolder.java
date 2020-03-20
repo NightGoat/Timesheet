@@ -7,6 +7,5 @@ public interface IResourceHolder {
     String getDirectory();
     SQLiteToExcel createSQLiteToExcel();
     String getTimeNeedToWorkFromPreferences();
-    void setTimeNeedToWorkFromPreferences(String time);
     String getString(int resource);
 }
