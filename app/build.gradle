@@ -38,9 +38,9 @@ dependencies {
     //Material
     implementation 'com.google.android.material:material:1.1.0'
     //Room
-    implementation "androidx.room:room-runtime:2.2.4"
-    annotationProcessor "androidx.room:room-compiler:2.2.4"
-    implementation 'androidx.room:room-rxjava2:2.2.4'
+    implementation "androidx.room:room-runtime:2.2.5"
+    annotationProcessor "androidx.room:room-compiler:2.2.5"
+    implementation 'androidx.room:room-rxjava2:2.2.5'
     //Rx
     implementation 'io.reactivex.rxjava2:rxjava:2.2.11'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'

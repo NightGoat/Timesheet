@@ -19,6 +19,11 @@
     <string name="saved">Successfully saved in: </string>
     <string name="error">Error:</string>
     <string name="timeMonth">Time worked this month:</string>
+    <string name="came">Came</string>
+    <string name="gone">Gone</string>
+    <string name="turnOnApp">Open timesheet app</string>
+    <string name="small_widget">small widget</string>
+    <string name="medium_widget">medium widget</string>
 
     <string-array name="month">
         <item>January</item>

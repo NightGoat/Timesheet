@@ -32,7 +32,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"/>
 
             </com.google.android.material.appbar.AppBarLayout>
 
@@ -59,7 +59,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:focusable="false"
-                app:endIconDrawable="@drawable/ic_launcher_background"
                 app:hintTextAppearance="@style/TextLabel"
                 app:layout_constraintEnd_toStartOf="@id/main_btn_nextDay"
                 app:layout_constraintStart_toEndOf="@id/main_btn_previousDay"
@@ -99,8 +98,8 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
                 android:background="?selectableItemBackground"
                 android:focusable="false"
                 app:endIconMode="clear_text"
@@ -127,8 +126,8 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
                 android:background="?selectableItemBackground"
                 android:focusable="false"
                 app:boxStrokeColor="@color/colorPrimary"
@@ -156,7 +155,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="2dp"
                 android:focusable="false"
                 app:hintTextAppearance="@style/TextLabel"
                 app:layout_constraintEnd_toStartOf="@id/main_TextInputLayout_timeLeftToWork"
@@ -171,7 +170,7 @@
                     android:focusable="false"
                     android:textColor="@color/colorGrey"
                     android:textSize="32sp"
-                    tools:text="6:30" />
+                    tools:text="06:30" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -180,8 +179,8 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
                 android:focusable="false"
                 app:hintTextAppearance="@style/TextLabel"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -196,7 +195,7 @@
                     android:focusable="false"
                     android:textColor="@color/colorGrey"
                     android:textSize="32sp"
-                    tools:text="-2:10" />
+                    tools:text="-02:10" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

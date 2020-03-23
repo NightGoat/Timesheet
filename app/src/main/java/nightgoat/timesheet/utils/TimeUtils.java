@@ -153,10 +153,10 @@ public abstract class TimeUtils {
         DateTime time1DT = DateTime.parse(time1, formatter2);
         DateTime time2DT = DateTime.parse(time2, formatter2);
         Period period = new Period(time1DT, time2DT);
+        String result;
         if (period.getMinutes() < 0) {
-            period = period.withMinutes(period.getMinutes() * -1);
-        }
-        return formatter.print(period);
+            return formatter.print(period.withMinutes(period.getMinutes() * -1));
+        } else
+            return "+" + formatter.print(period);
     }
-
 }

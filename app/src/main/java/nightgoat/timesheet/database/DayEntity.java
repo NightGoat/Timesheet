@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey;
 
 import java.util.Objects;
 
-@Entity(tableName = "days", indices = {@Index(value = {"date", "time_come", "time_gone"})})
+@Entity(tableName = "days", indices = {@Index(value = {"date", "came", "gone", "worked_time"})})
 public class DayEntity {
 
     @PrimaryKey
@@ -16,10 +16,10 @@ public class DayEntity {
     @NonNull
     private String date;
 
-    @ColumnInfo(name = "time_come")
+    @ColumnInfo(name = "came")
     private String timeCame;
 
-    @ColumnInfo(name = "time_gone")
+    @ColumnInfo(name = "gone")
     private String timeGone;
 
     @ColumnInfo(name = "worked_time")

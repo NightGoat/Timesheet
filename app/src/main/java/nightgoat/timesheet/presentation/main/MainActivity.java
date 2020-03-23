@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import nightgoat.timesheet.App;
 import nightgoat.timesheet.R;
+import nightgoat.timesheet.databinding.ActivityMain2Binding;
 import nightgoat.timesheet.databinding.ActivityMainBinding;
 import nightgoat.timesheet.di.AppComponent;
 import nightgoat.timesheet.di.DaggerMainActivityComponent;
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     @Inject
     DaysViewModel mViewModel;
 
-    private ActivityMainBinding binding;
+    private ActivityMain2Binding binding;
     private GestureDetector gestureDetector;
     private Integer day, month, year;
 
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = ActivityMain2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.mainToolbar);
         initViewModel();
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                     binding.mainEditGone
                             .setTextColor(getResources().getColor(R.color.colorAccent));
                     binding.mainEditTimeWasOnWork
-                            .setTextColor(getResources().getColor(R.color.colorPrimary));
+                           .setTextColor(getResources().getColor(R.color.colorPrimary));
                 } else {
                     binding.mainEditGone
                             .setTextColor(getResources().getColor(R.color.colorLightGrey));

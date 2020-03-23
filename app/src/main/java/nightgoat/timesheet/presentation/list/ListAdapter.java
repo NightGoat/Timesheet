@@ -52,7 +52,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new ViewHolder(
                 LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.card_day, parent, false));
+                        .inflate(R.layout.card_day_linear, parent, false));
     }
 
     @Override
@@ -83,7 +83,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         }
 
         void bind(DayEntity day) {
-            String dateTitle = day.getDate().substring(8, 10) + " " + TimeUtils.getDayOfTheWeekShort(day.getDate());
+            String dateTitle = day.getDate().substring(8, 10) + " " + TimeUtils.getDayOfTheWeek(day.getDate());
             cardDateTV.setText(dateTitle);
             this.itemView.setOnClickListener(v -> activity.onClickFinish(day.getDate()));
             chipCame.setText(day.getTimeCame());

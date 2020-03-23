@@ -9,6 +9,7 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModel;
 
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -77,7 +78,6 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
                         .subscribe(dayEntities -> {
                             days = dayEntities;
                             getDayEntity(date);
-
                         }, throwable -> Timber.tag(TAG).d("onStart: error with list: %s",
                                 throwable.getMessage())));
     }

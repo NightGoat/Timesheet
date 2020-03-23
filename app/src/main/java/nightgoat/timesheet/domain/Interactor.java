@@ -1,8 +1,10 @@
 package nightgoat.timesheet.domain;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.schedulers.Schedulers;
@@ -12,7 +14,6 @@ import nightgoat.timesheet.utils.TimeUtils;
 public class Interactor {
 
     private DaysRepository daysDataSource;
-
     public Interactor(DaysRepository daysDataSource) {
         this.daysDataSource = daysDataSource;
     }
@@ -31,6 +32,11 @@ public class Interactor {
 
     public Completable updateDay(DayEntity model) {
         return daysDataSource.updateDay(model).subscribeOn(Schedulers.io());
+    }
+
+    public Completable updateDayTimeOut(DayEntity model) {
+            //TODO implement timeout from accident clicks
+            return daysDataSource.updateDay(model).subscribeOn(Schedulers.io());
     }
 
     public Maybe<DayEntity> getDayEntityByDay(String date) {

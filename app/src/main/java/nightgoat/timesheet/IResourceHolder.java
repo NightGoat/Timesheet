@@ -1,5 +1,7 @@
 package nightgoat.timesheet;
 
+import android.content.ContentResolver;
+
 import com.ajts.androidmads.library.SQLiteToExcel;
 
 public interface IResourceHolder {
@@ -8,4 +10,5 @@ public interface IResourceHolder {
     SQLiteToExcel createSQLiteToExcel();
     String getTimeNeedToWorkFromPreferences();
     String getString(int resource);
+    ContentResolver getContentResolver();
 }

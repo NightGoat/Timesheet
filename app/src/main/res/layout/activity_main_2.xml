@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:id="@+id/main_scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:context=".presentation.main.MainActivity">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/main_appBarLayout"
+                style="@style/Widget.MaterialComponents.Toolbar.Surface"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/main_toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <ImageButton
+                android:id="@+id/main_btn_previousDay"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+                android:layout_width="@dimen/image_btn"
+                android:layout_height="@dimen/image_btn"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:contentDescription="@string/day_before"
+                android:focusable="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_keyboard_arrow_left"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/main_appBarLayout" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/main_TextInputLayout_date"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:focusable="false"
+                app:hintTextAppearance="@style/TextLabel"
+                app:layout_constraintEnd_toStartOf="@id/main_btn_nextDay"
+                app:layout_constraintStart_toEndOf="@id/main_btn_previousDay"
+                app:layout_constraintTop_toBottomOf="@id/main_appBarLayout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/main_edit_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:focusable="false"
+                    android:gravity="center"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="32sp"
+                    tools:text="02.09.1991" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/main_btn_nextDay"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+                android:layout_width="@dimen/image_btn"
+                android:layout_height="@dimen/image_btn"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:contentDescription="@string/day_after"
+                android:focusable="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_keyboard_arrow_right"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/main_btn_previousDay" />
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/main_TextInputLayout_came"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="4dp"
+                android:background="?selectableItemBackground"
+                android:focusable="false"
+                app:endIconMode="clear_text"
+                app:hintTextAppearance="@style/TextLabel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/main_btn_previousDay"
+                app:startIconDrawable="@drawable/ic_arrow_downward">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/main_edit_came"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:gravity="center"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="32sp"
+                    tools:text="22:22" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/main_TextInputLayout_gone"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="?selectableItemBackground"
+                android:focusable="false"
+                app:boxStrokeColor="@color/colorPrimary"
+                app:endIconMode="clear_text"
+                app:hintTextAppearance="@style/TextLabel"
+                app:hintTextColor="@color/colorPrimary"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/main_TextInputLayout_came"
+                app:startIconDrawable="@drawable/ic_arrow_upward">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/main_edit_gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:gravity="center"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="32sp"
+                    tools:text="22:22" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/main_timeWasOnWork_TextInputLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="4dp"
+                android:focusable="false"
+                app:hintTextAppearance="@style/TextLabel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/main_TextInputLayout_gone"
+                app:startIconDrawable="@drawable/ic_hourglass_empty">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/main_edit_timeWasOnWork"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:gravity="center"
+                    android:paddingEnd="50dp"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="32sp"
+                    tools:text="06:30"
+                    tools:ignore="RtlSymmetry" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/main_TextInputLayout_timeLeftToWork"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:focusable="false"
+                app:hintTextAppearance="@style/TextLabel"
+                app:layout_constraintStart_toStartOf="@id/main_TextInputLayout_came"
+                app:layout_constraintTop_toBottomOf="@id/main_timeWasOnWork_TextInputLayout"
+                app:startIconDrawable="@drawable/ic_hourglass_ful">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/main_edit_timeLeftToWork"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:gravity="center"
+                    android:paddingEnd="60dp"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="32sp"
+                    tools:text="-02:10"
+                    tools:ignore="RtlSymmetry" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/main_TextInputLayout_timeLeftToWork"
+                card_view:cardCornerRadius="4dp"
+                card_view:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="4dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/main_text_workedHoursSum"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/timeMonth"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/main_text_workedHoursSum_value"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:gravity="center"
+                        android:textSize="32sp"
+                        tools:text="40:00" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/activity_main_came_btn"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            app:icon="@drawable/ic_arrow_downward"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/activity_main_gone_btn"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/colorAccent"
+            android:textSize="20sp"
+            app:icon="@drawable/ic_arrow_upward"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp" />
+    </LinearLayout>
+
+</LinearLayout>

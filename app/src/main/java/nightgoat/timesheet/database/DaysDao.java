@@ -22,7 +22,7 @@ public interface DaysDao {
     @Query("SELECT * FROM days WHERE strftime('%m', date) = :month AND strftime('%Y', date) = :year ORDER BY date")
     Flowable<List<DayEntity>> getAllDays(String month, String year);
 
-    @Query("SELECT worked_time FROM days WHERE strftime('%Y', date) = :year AND strftime('%m', date) = :month AND worked_time IS NOT NULL")
+    @Query("SELECT Worked_time FROM days WHERE strftime('%Y', date) = :year AND strftime('%m', date) = :month AND worked_time IS NOT NULL")
     Flowable<List<String>> getWorkedHoursSumList(String month, String year);
 
     @Query("SELECT * FROM days WHERE date = :date")
@@ -37,7 +37,7 @@ public interface DaysDao {
     @Delete
     Completable deleteDay(DayEntity model);
 
-    @Query("DELETE FROM days WHERE time_come is NULL AND time_gone is NULL")
+    @Query("DELETE FROM days WHERE came is NULL AND gone is NULL")
     Completable deleteDaysWithoutTime();
 
     @Query("DELETE FROM days")

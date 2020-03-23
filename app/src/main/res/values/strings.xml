@@ -19,6 +19,11 @@
     <string name="saved">Успешно сохранено в:</string>
     <string name="error">Ошибка:</string>
     <string name="timeMonth">Отработано в этом месяце:</string>
+    <string name="came">Пришел</string>
+    <string name="gone">Ушел</string>
+    <string name="turnOnApp">Открыть приложение timesheet</string>
+    <string name="small_widget">Две кнопки</string>
+    <string name="medium_widget">Три кнопки</string>
 
     <string-array name="month">
         <item>Январь</item>
