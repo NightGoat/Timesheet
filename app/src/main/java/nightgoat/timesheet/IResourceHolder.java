@@ -10,5 +10,4 @@ public interface IResourceHolder {
     SQLiteToExcel createSQLiteToExcel();
     String getTimeNeedToWorkFromPreferences();
     String getString(int resource);
-    ContentResolver getContentResolver();
 }

@@ -9,7 +9,6 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModel;
 
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -24,9 +23,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import nightgoat.timesheet.IResourceHolder;
-import nightgoat.timesheet.utils.TimeUtils;
 import nightgoat.timesheet.database.DayEntity;
 import nightgoat.timesheet.domain.Interactor;
+import nightgoat.timesheet.utils.TimeUtils;
 import timber.log.Timber;
 
 public class DaysViewModel extends ViewModel implements LifecycleObserver {
@@ -100,12 +99,14 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
         Timber.tag(TAG).d(
                 "DayEntity timeCame: %s, timeGone: %s, timeDifference: %s",
                 timeCome, timeGone, timeDifference);
-        countComeGoneDifference();
-        countTimeCanGoHome();
+
+        dataContainer.note = dayEntity.getNote();
         dataContainer.timeCame = timeCome;
         dataContainer.timeGone = timeGone;
         dataContainer.date = TimeUtils.getDateInNormalFormat(date);
         dataContainer.dayOfWeek = TimeUtils.getDayOfTheWeek(date);
+        countComeGoneDifference();
+        countTimeCanGoHome();
         containerLiveData.postValue(dataContainer);
     }
 
@@ -160,6 +161,13 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
         date = String.format(Locale.getDefault(), "%d-%02d-%02d", year, month, day);
     }
 
+    void updateNote(String text){
+        dayEntity.setNote(text);
+        mDisposable.add(interactor.updateDay(dayEntity).subscribe());
+        dataContainer.note = text;
+        containerLiveData.postValue(dataContainer);
+    }
+
     @SuppressLint("DefaultLocale")
     private void getWorkedHoursSum(int month, int year) {
         Timber.tag(TAG).d("getWorkedHoursSum: " + String.format("%02d", month) + " " + year);
@@ -211,6 +219,7 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
     }
 
     private void countTimeCanGoHome() {
+        Timber.d("countTimeCanGoHome: timeCome: %s, timeGone: %s", timeCome, timeGone);
         if (timeCome != null && timeGone == null) {
             dataContainer.timeGone = TimeUtils.countTimeSum24(timeCome, timeNeedToWork);
             dataContainer.isGoneTimeExist = false;

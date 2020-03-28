@@ -20,8 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:textSize="16sp"
-            tools:text="01 Wed"
-
+            tools:text="01 Wednesday"
             android:paddingTop="4dp"
             android:paddingBottom="4dp"
             android:gravity="center"
@@ -38,45 +37,61 @@
             card_view:layout_constraintTop_toTopOf="parent"
             card_view:layout_constraintBottom_toBottomOf="@id/card_date_textView"
             android:layout_marginEnd="8dp"
-            android:src="@drawable/ic_cancel"
+            android:src="@drawable/ic_cancel_white"
             android:background="@android:color/transparent"
             android:contentDescription="@string/delete"
             android:scaleType="fitCenter"
             android:visibility="visible"/>
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/card_chipGroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            card_view:layout_constraintTop_toBottomOf="@id/card_date_textView"
-            card_view:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="4dp">
-
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipCame"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/ListChip"
                 tools:text="10:20"
                 card_view:chipIcon="@drawable/ic_arrow_downward"
-                card_view:closeIconEnabled="true"/>
+                android:layout_marginStart="2dp"
+                card_view:closeIconEnabled="true"
+                card_view:layout_constraintTop_toBottomOf="@id/card_date_textView"
+                card_view:layout_constraintStart_toStartOf="parent"
+                card_view:layout_constraintEnd_toStartOf="@id/chipGone"
+                card_view:layout_constraintHorizontal_chainStyle="spread_inside"
+                />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipGone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/ListChip"
                 tools:text="18:30"
                 card_view:chipIcon="@drawable/ic_arrow_upward"
-                card_view:closeIconEnabled="true"/>
+                android:layout_marginStart="4dp"
+                card_view:closeIconEnabled="true"
+                card_view:layout_constraintStart_toEndOf="@id/chipCame"
+                card_view:layout_constraintTop_toTopOf="@id/chipCame"
+                card_view:layout_constraintEnd_toStartOf="@id/chipWas"/>
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipWas"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/ListChip"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="2dp"
                 tools:text="08:10"
                 card_view:chipIcon="@drawable/ic_hourglass_empty"
-                card_view:rippleColor="@android:color/transparent"/>
+                card_view:rippleColor="@android:color/transparent"
+                card_view:layout_constraintStart_toEndOf="@id/chipGone"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintTop_toTopOf="@id/chipCame"
+                card_view:textEndPadding="20dp"
+                />
 
-        </com.google.android.material.chip.ChipGroup>
+    <TextView
+        android:id="@+id/card_text_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        card_view:layout_constraintStart_toStartOf="parent"
+        card_view:layout_constraintTop_toBottomOf="@id/chipCame"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="8dp"
+        />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.cardview.widget.CardView>

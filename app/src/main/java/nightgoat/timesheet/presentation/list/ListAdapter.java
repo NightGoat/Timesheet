@@ -61,7 +61,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     }
 
 
-
     @Override
     public int getItemCount() {
         return data.size();
@@ -69,7 +68,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView cardDateTV;
+        private TextView cardDateTV, cardNote;
         private Chip chipCame, chipGone, chipWas;
         private ImageButton deleteBtn;
 
@@ -80,13 +79,18 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             chipGone = itemView.findViewById(R.id.chipGone);
             chipWas = itemView.findViewById(R.id.chipWas);
             deleteBtn = itemView.findViewById(R.id.card_delete);
+            cardNote = itemView.findViewById(R.id.card_text_note);
         }
 
         void bind(DayEntity day) {
             String dateTitle = day.getDate().substring(8, 10) + " " + TimeUtils.getDayOfTheWeek(day.getDate());
             cardDateTV.setText(dateTitle);
             this.itemView.setOnClickListener(v -> activity.onClickFinish(day.getDate()));
+            if (day.getTimeCame() == null) chipCame.setCloseIconVisible(false);
+            else chipCame.setCloseIconVisible(true);
             chipCame.setText(day.getTimeCame());
+            if (day.getTimeGone() == null) chipGone.setCloseIconVisible(false);
+            else chipGone.setCloseIconVisible(true);
             chipGone.setText(day.getTimeGone());
             chipWas.setText(day.getTimeWorked());
             chipGone.setOnClickListener(v -> activity.onClickChip(day, TimeType.GONE));
@@ -94,6 +98,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             chipCame.setOnCloseIconClickListener(v -> activity.onClickCameChipClose(day));
             chipGone.setOnCloseIconClickListener(v -> activity.onClickGoneChipClose(day));
             deleteBtn.setOnClickListener(v -> activity.onClickDelete(day));
+            if (day.getNote() != null && !day.getNote().isEmpty()) cardNote.setText(day.getNote());
+            else cardNote.setVisibility(View.GONE);
         }
     }
 }

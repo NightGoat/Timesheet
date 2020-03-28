@@ -3,12 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="nightgoat.timesheet">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:name="nightgoat.timesheet.App"
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/timesheet2"
         android:label="@string/app_name"
@@ -16,9 +16,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
-        <activity android:name="nightgoat.timesheet.presentation.settings.SettingsActivity"/>
-        <activity android:name="nightgoat.timesheet.presentation.list.ListActivity" />
-        <activity android:name="nightgoat.timesheet.presentation.main.MainActivity"
+        <activity android:name=".presentation.main.NoteActivity" />
+        <activity android:name=".presentation.settings.SettingsActivity" />
+        <activity android:name=".presentation.list.ListActivity" />
+        <activity
+            android:name=".presentation.main.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,22 +29,30 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name="nightgoat.timesheet.WidgetProvider" android:label="@string/small_widget">
+
+        <receiver
+            android:name=".WidgetProvider"
+            android:label="@string/small_widget">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_info"/>
+                android:resource="@xml/widget_info" />
         </receiver>
-        <receiver android:name="nightgoat.timesheet.WidgetThreeBtnsProvider" android:label="@string/medium_widget">
+        <receiver
+            android:name=".WidgetThreeBtnsProvider"
+            android:label="@string/medium_widget">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_info_3buttons"/>
+                android:resource="@xml/widget_info_3buttons" />
         </receiver>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -50,7 +60,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
     </application>
 

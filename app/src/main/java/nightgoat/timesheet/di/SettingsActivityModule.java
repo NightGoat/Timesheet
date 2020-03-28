@@ -14,12 +14,14 @@ import nightgoat.timesheet.presentation.settings.SettingsViewModel;
 class SettingsActivityModule {
 
     @Provides
+    @ActivityScope
     SettingsViewModel provideSettingsViewModel(AppCompatActivity activity, ViewModelFactory factory) {
         return new ViewModelProvider(activity, factory)
                 .get(SettingsViewModel.class);
     }
 
     @Provides
+    @ActivityScope
     ViewModelFactory provideViewModelFactory(Interactor interactor, IResourceHolder holder){
         return new ViewModelFactory(interactor, holder);
     }

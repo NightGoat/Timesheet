@@ -13,4 +13,39 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="TextCard" >
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">4dp</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+
+    <style name="TextCard.gravityStart" parent="TextCard">
+        <item name="android:gravity">fill</item>
+        <item name="android:textColor">@color/colorGrey</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="TextCard.bigText" parent="TextCard" >
+        <item name="android:textSize">32sp</item>
+    </style>
+
+    <style name="Card" >
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="ListChip" >
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+    </style>
+
 </resources>

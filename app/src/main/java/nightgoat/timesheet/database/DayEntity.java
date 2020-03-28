@@ -16,6 +16,8 @@ public class DayEntity {
     @NonNull
     private String date;
 
+    private String note;
+
     @ColumnInfo(name = "came")
     private String timeCame;
 
@@ -24,7 +26,6 @@ public class DayEntity {
 
     @ColumnInfo(name = "worked_time")
     private String timeWorked;
-
 
     public DayEntity(@NonNull String date) {
         this.date = date;
@@ -70,5 +71,13 @@ public class DayEntity {
 
     public void setTimeGone(String timeGone) {
         this.timeGone = timeGone;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 }

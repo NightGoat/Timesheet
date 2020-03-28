@@ -3,11 +3,10 @@ package nightgoat.timesheet.presentation.list;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.chip.Chip;
 
-import java.time.Year;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -29,6 +27,7 @@ import nightgoat.timesheet.di.DaggerListActivityComponent;
 import nightgoat.timesheet.presentation.ActivityAdapterCallbacks;
 import nightgoat.timesheet.presentation.settings.SettingsActivity;
 import nightgoat.timesheet.utils.DateType;
+import nightgoat.timesheet.utils.mTextWatcher;
 import nightgoat.timesheet.utils.TimeType;
 import nightgoat.timesheet.utils.TimeUtils;
 import timber.log.Timber;
@@ -56,6 +55,14 @@ public class ListActivity extends AppCompatActivity implements ActivityAdapterCa
         initList();
         initSearchTextChangedListener();
         initViewModelObservations();
+        initCloseSearchBtnClickListener();
+    }
+
+    private void initCloseSearchBtnClickListener() {
+        binding.listCloseSearch.setOnClickListener(v -> {
+            binding.listActivityEditText.setText("");
+            binding.listSearchLayout.setVisibility(View.GONE);
+        });
     }
 
     private void initViewModelObservations() {
@@ -110,13 +117,7 @@ public class ListActivity extends AppCompatActivity implements ActivityAdapterCa
     }
 
     private void initSearchTextChangedListener() {
-        binding.listActivityEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
+        binding.listActivityEditText.addTextChangedListener(new mTextWatcher(){
             @Override
             public void afterTextChanged(Editable s) {
                 adapter.filter(s.toString());
@@ -157,9 +158,18 @@ public class ListActivity extends AppCompatActivity implements ActivityAdapterCa
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            goToSettingsActivity();
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                goToSettingsActivity();
+                break;
+            case R.id.action_search:
+                if (binding.listSearchLayout.getVisibility() == View.GONE)
+                    binding.listSearchLayout.setVisibility(View.VISIBLE);
+                else {
+                    binding.listActivityEditText.setText("");
+                    binding.listSearchLayout.setVisibility(View.GONE);
+                }
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -186,7 +196,6 @@ public class ListActivity extends AppCompatActivity implements ActivityAdapterCa
     public void onClickChip(DayEntity day, TimeType type) {
         showTimePickerDialog(day, type);
     }
-
 
     @Override
     public void onClickCameChipClose(DayEntity day) {

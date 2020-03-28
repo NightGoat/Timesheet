@@ -13,6 +13,7 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableMaybeObserver;
 import io.reactivex.schedulers.Schedulers;
 import nightgoat.timesheet.database.DayEntity;
@@ -43,30 +44,20 @@ public class WidgetProvider extends AppWidgetProvider {
         DaggerBroadcastReceiverComponent.builder().appComponent(component).build().inject(this);
         String currentTime = TimeUtils.getCurrentTime();
         if (Objects.equals(intent.getAction(), "nightgoat.timesheet.action.came")) {
-            interactor.getDayEntityByDay(TimeUtils.getCurrentDate())
+            Disposable disposable = interactor.getDayEntityByDay(TimeUtils.getCurrentDate())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new DisposableMaybeObserver<DayEntity>() {
-                        @Override
-                        public void onSuccess(DayEntity dayEntity) {
-                            dayEntity.setTimeCame(currentTime);
-                            interactor.updateDayTimeOut(dayEntity).subscribeOn(Schedulers.io()).subscribe();
-                            makeToast(context.getString(R.string.came) + ": " + currentTime, context);
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            makeToast(e.getMessage(), context);
-                        }
-
-                        @Override
-                        public void onComplete() {
-                            DayEntity dayEntity = new DayEntity(TimeUtils.getCurrentDate());
-                            dayEntity.setTimeCame(currentTime);
-                            interactor.addDay(dayEntity).subscribeOn(Schedulers.io()).subscribe();
-                            makeToast(context.getString(R.string.came) + ": " + currentTime, context);
-                        }
-                    });
+                    .subscribe(dayEntity -> {
+                                dayEntity.setTimeCame(currentTime);
+                                interactor.updateDayTimeOut(dayEntity).subscribeOn(Schedulers.io()).subscribe();
+                                makeToast(context.getString(R.string.came) + ": " + currentTime, context);
+                            }, throwable -> makeToast(throwable.getMessage(), context), () -> {
+                                DayEntity dayEntity = new DayEntity(TimeUtils.getCurrentDate());
+                                dayEntity.setTimeCame(currentTime);
+                                interactor.addDay(dayEntity).subscribeOn(Schedulers.io()).subscribe();
+                                makeToast(context.getString(R.string.came) + ": " + currentTime, context);
+                            }
+                    );
         }
         if (Objects.equals(intent.getAction(), "nightgoat.timesheet.action.gone")) {
             interactor.getDayEntityByDay(TimeUtils.getCurrentDate())

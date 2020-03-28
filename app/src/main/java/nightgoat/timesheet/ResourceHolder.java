@@ -1,6 +1,5 @@
 package nightgoat.timesheet;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
@@ -38,10 +37,4 @@ public class ResourceHolder implements IResourceHolder {
     public String getString(int resource) {
         return context.getString(resource);
     }
-
-    @Override
-    public ContentResolver getContentResolver() {
-        return context.getContentResolver();
-    }
-
 }

@@ -14,12 +14,14 @@ import nightgoat.timesheet.presentation.main.DaysViewModel;
 class MainActivityModule {
 
     @Provides
+    @ActivityScope
     DaysViewModel provideDaysViewModel(AppCompatActivity activity, ViewModelFactory factory) {
         return new ViewModelProvider(activity, factory)
                 .get(DaysViewModel.class);
     }
 
     @Provides
+    @ActivityScope
     ViewModelFactory provideViewModelFactory(Interactor interactor, IResourceHolder holder){
         return new ViewModelFactory(interactor, holder);
     }

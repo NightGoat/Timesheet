@@ -7,5 +7,7 @@
     <color name="colorGreen">#66BB6A</color>
     <color name="colorAccent">#EF5350</color>
     <color name="colorGrey"> #737373</color>
+    <color name="colorBlack">#000000</color>
     <color name="colorLightGrey">#A5A5A5</color>
+    <color name="colorLightGreyBackground">#08000000</color>
 </resources>

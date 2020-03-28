@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.list.ListActivity">
+    tools:context=".presentation.list.ListActivity"
+    android:background="@color/colorLightGreyBackground">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/list_toolbar_layout"
@@ -31,7 +32,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/list_toolbar_layout"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp">
+        android:layout_marginEnd="8dp"
+        >
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/list_chipGroup_month"
@@ -50,7 +52,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/list_scroll_month"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp">
+        android:layout_marginEnd="8dp"
+        >
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/list_chipGroup_year"
@@ -61,16 +64,35 @@
 
     </HorizontalScrollView>
 
-    <EditText
-        android:visibility="gone"
-        android:id="@+id/list_activity_EditText"
+    <LinearLayout
+        android:id="@+id/list_search_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:autofillHints="@string/search"
-        android:hint="@string/search"
-        android:inputType="date"
-        app:layout_constraintTop_toBottomOf="@id/list_scroll_year" />
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/list_scroll_year"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/list_activity_EditText"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:autofillHints="@string/search"
+            android:hint="@string/search"
+            android:inputType="date"
+            />
+
+        <ImageView
+            android:id="@+id/list_close_search"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_cancel"
+            android:contentDescription="@string/closeSearch" />
+    </LinearLayout>
+
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_activity_recyclerView"
@@ -78,7 +100,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/list_activity_EditText"
+        app:layout_constraintTop_toBottomOf="@id/list_search_layout"
         tools:listitem="@layout/card_day_linear"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,7 @@
 package nightgoat.timesheet.presentation.main;
 
 class DataContainer {
+    String note;
     String timeCame;
     String timeGone;
     String date;

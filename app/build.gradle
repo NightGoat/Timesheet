@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 29
@@ -66,4 +68,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:17.2.3'
 
     implementation 'com.facebook.stetho:stetho:1.5.1'
+    implementation 'it.sephiroth.android.library.targettooltip:target-tooltip-library:2.0.3'
 }

@@ -8,6 +8,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
+import java.sql.Date;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -17,6 +18,7 @@ public abstract class TimeUtils {
 
     private static final String TAG = TimeUtils.class.getName();
     private static Calendar calendar = Calendar.getInstance();
+    private static final DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
 
     public static int getCurrentMonth() {
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -73,36 +75,33 @@ public abstract class TimeUtils {
     }
 
     public static String getCurrentDate() {
-        DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
         return sqlFormat.print(System.currentTimeMillis());
     }
 
     public static String getCurrentDateNormalFormat() {
-        DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("dd.MM.yyyy");
-        return sqlFormat.print(System.currentTimeMillis());
+        DateTimeFormatter normalFormat = DateTimeFormat.shortDate().withLocale(Locale.getDefault());
+        return normalFormat.print(System.currentTimeMillis());
     }
 
     public static String getDateInNormalFormat(String sqlDate) {
-        DateTimeFormatter normalFormat = DateTimeFormat.forPattern("dd.MM.yyyy");
-        DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
+        DateTimeFormatter normalFormat = DateTimeFormat.shortDate().withLocale(Locale.getDefault());
         DateTime sqlDateTime = sqlFormat.parseDateTime(sqlDate);
         return normalFormat.print(sqlDateTime.getMillis());
     }
 
     public static String getDayOfTheWeek(String sqlDate) {
-        DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
         DateTime sqlDateTime = sqlFormat.parseDateTime(sqlDate);
         return StringUtils.capitalize(sqlDateTime.dayOfWeek().getAsText(Locale.getDefault()));
     }
 
     public static String getDayOfTheWeekShort(String sqlDate) {
-        DateTimeFormatter sqlFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
         DateTimeFormatter dayOfWeekFormat = DateTimeFormat.forPattern("E");
         DateTime sqlDateTime = sqlFormat.parseDateTime(sqlDate);
         return dayOfWeekFormat.print(sqlDateTime);
     }
 
     public static String countTimeSum24(String time1, String time2) {
+        Timber.d("countTimeSum24(%s, %s)", time1, time2);
         PeriodFormatter formatter = new PeriodFormatterBuilder()
                 .minimumPrintedDigits(2)
                 .printZeroAlways()
@@ -153,9 +152,11 @@ public abstract class TimeUtils {
         DateTime time1DT = DateTime.parse(time1, formatter2);
         DateTime time2DT = DateTime.parse(time2, formatter2);
         Period period = new Period(time1DT, time2DT);
-        String result;
         if (period.getMinutes() < 0) {
-            return formatter.print(period.withMinutes(period.getMinutes() * -1));
+            String result = formatter.print(period.withMinutes(period.getMinutes() * -1));
+            if (result.contains("-"))
+                return result;
+            else return "-" + result;
         } else
             return "+" + formatter.print(period);
     }
