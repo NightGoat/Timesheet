@@ -19,7 +19,21 @@
     <string name="saved">Successfully saved in: </string>
     <string name="error">Error:</string>
     <string name="timeMonth">Time worked this month:</string>
-
+    <string name="came">Came</string>
+    <string name="gone">Gone</string>
+    <string name="turnOnApp">Open timesheet app</string>
+    <string name="small_widget">small widget</string>
+    <string name="medium_widget">medium widget</string>
+    <string name="closeSearch">Close search panel</string>
+    <string name="shot_wtf">Help</string>
+    <string name="wtfCame">Time at which you came to work</string>
+    <string name="wtfGone">Time at which you left work</string>
+    <string name="wtfTimeWasOnWork">The time you spent at work today</string>
+    <string name="wtfTimeLeftToWork">Time you underworked/overworked</string>
+    <string name="wtfWorkedHours">The time you worked this month</string>
+    <string name="note">Note</string>
+    <string name="save">Save</string>
+    <string name="wtfNote">Note about this day</string>
     <string-array name="month">
         <item>January</item>
         <item>February</item>

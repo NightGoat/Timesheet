@@ -11,16 +11,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 
 @Database(entities = {DayEntity.class},
-        version = 2,
+        version = 5,
         exportSchema = false)
 public abstract class DaysDatabase extends RoomDatabase {
-
-    private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
-        @Override
-        public void migrate(@NonNull SupportSQLiteDatabase database) {
-            database.execSQL("ALTER TABLE days ADD COLUMN worked_time TEXT");
-        }
-    };
 
     private static volatile DaysDatabase INSTANCE;
 
@@ -34,11 +27,18 @@ public abstract class DaysDatabase extends RoomDatabase {
                             context.getApplicationContext(),
                             DaysDatabase.class,
                             "days_database.db")
-                            .addMigrations(MIGRATION_1_2)
+                            .addMigrations(MIGRATION_4_5)
                             .build();
                 }
             }
         }
         return INSTANCE;
     }
+
+    private static final Migration MIGRATION_4_5 = new Migration(4, 5) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE days ADD COLUMN note TEXT");
+        }
+    };
 }

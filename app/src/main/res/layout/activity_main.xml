@@ -6,21 +6,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@color/colorLightGreyBackground"
+    android:orientation="vertical" >
 
     <ScrollView
-        android:id="@+id/activity_main_scrollView"
+        android:id="@+id/main_scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/mainConstraintLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:context=".presentation.main.MainActivity">
 
             <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/activity_main_appBarLayout"
+                android:id="@+id/main_appBarLayout"
                 style="@style/Widget.MaterialComponents.Toolbar.Surface"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -28,7 +30,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/activity_main_toolbar"
+                    android:id="@+id/main_toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     app:layout_constraintStart_toStartOf="parent"
@@ -37,10 +39,10 @@
             </com.google.android.material.appbar.AppBarLayout>
 
             <ImageButton
-                android:id="@+id/activity_main_previousDay_btn"
+                android:id="@+id/main_btn_previousDay"
                 style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-                android:layout_width="@dimen/image_btn"
-                android:layout_height="@dimen/image_btn"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
@@ -50,39 +52,40 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_keyboard_arrow_left"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/activity_main_appBarLayout" />
+                app:layout_constraintTop_toBottomOf="@id/main_appBarLayout" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/activity_main_day_TextInputLayout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/main_layout_date"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:focusable="false"
-                app:endIconDrawable="@drawable/ic_launcher_background"
-                app:hintTextAppearance="@style/TextLabel"
-                app:layout_constraintEnd_toStartOf="@id/activity_main_nextDay_btn"
-                app:layout_constraintStart_toEndOf="@id/activity_main_previousDay_btn"
-                app:layout_constraintTop_toBottomOf="@id/activity_main_appBarLayout">
+                android:background="?attr/selectableItemBackground"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toStartOf="@id/main_btn_nextDay"
+                app:layout_constraintStart_toEndOf="@id/main_btn_previousDay"
+                app:layout_constraintTop_toTopOf="@id/main_btn_previousDay">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/activity_main_day_TextInputEditText"
+                <TextView
+                    android:id="@+id/main_text_dayOfWeek"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:focusable="false"
                     android:gravity="center"
-                    android:textColor="@color/colorGrey"
+                    android:textSize="16sp"
+                    tools:text="Понедельник" />
+
+                <TextView
+                    android:id="@+id/main_text_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:textSize="32sp"
                     tools:text="02.09.1991" />
-
-            </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
             <ImageButton
-                android:id="@+id/activity_main_nextDay_btn"
+                android:id="@+id/main_btn_nextDay"
                 style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-                android:layout_width="@dimen/image_btn"
-                android:layout_height="@dimen/image_btn"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
                 android:layout_marginEnd="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
@@ -91,155 +94,245 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_keyboard_arrow_right"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/activity_main_previousDay_btn" />
-
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/activity_main_came_TextInputLayout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:background="?selectableItemBackground"
-                android:focusable="false"
-                app:endIconMode="clear_text"
-                app:hintTextAppearance="@style/TextLabel"
-                app:layout_constraintEnd_toStartOf="@id/activity_main_gone_TextInputLayout"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/activity_main_previousDay_btn"
-                app:startIconDrawable="@drawable/ic_arrow_downward">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/activity_main_came_TextInputEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="32sp"
-                    tools:text="22:22" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/activity_main_gone_TextInputLayout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:background="?selectableItemBackground"
-                android:focusable="false"
-                app:boxStrokeColor="@color/colorPrimary"
-                app:endIconMode="clear_text"
-                app:hintTextAppearance="@style/TextLabel"
-                app:hintTextColor="@color/colorPrimary"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/activity_main_came_TextInputLayout"
-                app:layout_constraintTop_toTopOf="@id/activity_main_came_TextInputLayout"
-                app:startIconDrawable="@drawable/ic_arrow_upward">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/activity_main_gone_TextInputEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="32sp"
-                    tools:text="22:22" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/activity_main_timeWasOnWork_TextInputLayout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:focusable="false"
-                app:hintTextAppearance="@style/TextLabel"
-                app:layout_constraintEnd_toStartOf="@id/activity_main_timeLeftToWork_TextInputLayout"
-                app:layout_constraintStart_toStartOf="@id/activity_main_came_TextInputLayout"
-                app:layout_constraintTop_toBottomOf="@id/activity_main_came_TextInputLayout"
-                app:startIconDrawable="@drawable/ic_hourglass_empty">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/activity_main_timeWasOnWork_TextInputEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:textColor="@color/colorGrey"
-                    android:textSize="32sp"
-                    tools:text="6:30" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/activity_main_timeLeftToWork_TextInputLayout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:focusable="false"
-                app:hintTextAppearance="@style/TextLabel"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/activity_main_timeWasOnWork_TextInputLayout"
-                app:layout_constraintTop_toTopOf="@id/activity_main_timeWasOnWork_TextInputLayout"
-                app:startIconDrawable="@drawable/ic_hourglass_ful">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/activity_main_timeLeftToWork_TextInputEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:textColor="@color/colorGrey"
-                    android:textSize="32sp"
-                    tools:text="-2:10" />
-
-            </com.google.android.material.textfield.TextInputLayout>
+                app:layout_constraintTop_toTopOf="@id/main_btn_previousDay" />
 
             <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                app:cardUseCompatPadding="true"
+                android:id="@+id/main_card_came"
+                style="@style/Card"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="5dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/activity_main_timeWasOnWork_TextInputLayout"
+                app:layout_constraintTop_toBottomOf="@id/main_layout_date"
+                card_view:cardCornerRadius="4dp"
+                card_view:cardElevation="4dp">
+
+                    <LinearLayout
+                        android:id="@+id/mainLinearLayoutCame"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/mainIconCame"
+                            android:layout_width="50dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/colorPrimary"
+                            android:contentDescription="@string/wtfCame"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_arrow_downward_white" />
+
+                        <TextView
+                            android:id="@+id/main_text_came_value"
+                            style="@style/TextCard.bigText"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:textColor="@color/colorPrimary"
+                            tools:text="08:30" />
+
+                        <ImageButton
+                            android:id="@+id/main_btn_delete_came"
+                            android:layout_width="50dp"
+                            android:layout_height="match_parent"
+                            android:background="@android:color/transparent"
+                            android:contentDescription="@string/delete"
+                            android:src="@drawable/ic_cancel"
+                            android:visibility="invisible" />
+
+                    </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/main_card_gone"
+                style="@style/Card"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/main_card_came"
                 card_view:cardCornerRadius="4dp"
                 card_view:cardElevation="4dp">
 
                 <LinearLayout
+                    android:id="@+id/mainLinearLayoutGone"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="4dp"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/mainIconGone"
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/colorAccent"
+                        android:contentDescription="@string/wtfGone"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_arrow_upward_white" />
 
                     <TextView
-                        android:id="@+id/activity_main_workedHoursSum_TextView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/timeMonth"
-                        android:textSize="16sp" />
+                        android:id="@+id/main_text_gone_value"
+                        style="@style/TextCard.bigText"
+                        tools:text="18:22" />
+
+                    <ImageButton
+                        android:id="@+id/main_btn_delete_gone"
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/delete"
+                        android:src="@drawable/ic_cancel"
+                        android:visibility="invisible" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/main_card_timeWasOnWork"
+                style="@style/Card"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/main_card_gone"
+                card_view:cardCornerRadius="4dp"
+                card_view:cardElevation="4dp">
+
+                <LinearLayout
+                    android:id="@+id/mainLinearLayoutTimeWasOnWork"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/mainIconTimeWasOnWork"
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@string/wtfTimeWasOnWork"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_hourglass_empty" />
 
                     <TextView
-                        android:id="@+id/activity_main_workedHoursSum_TextView2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:gravity="center"
-                        android:textSize="24sp"
-                        tools:text="40:00" />
+                        android:id="@+id/main_text_timeWasOnWork"
+                        style="@style/TextCard.bigText"
+                        android:paddingEnd="50dp"
+                        tools:ignore="RtlSymmetry"
+                        tools:text="08:30" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/main_card_timeLeftToWork"
+                style="@style/Card"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/main_card_timeWasOnWork"
+                card_view:cardCornerRadius="4dp"
+                card_view:cardElevation="4dp">
+
+                <LinearLayout
+                    android:id="@+id/mainLinearLayoutTimeLeftToWork"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/mainIconTimeLeftToWork"
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@string/wtfTimeLeftToWork"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_hourglass_ful" />
+
+                    <TextView
+                        android:id="@+id/main_text_timeLeftToWork"
+                        style="@style/TextCard.bigText"
+                        android:paddingEnd="50dp"
+                        tools:ignore="RtlSymmetry"
+                        tools:text="08:30" />
 
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.cardview.widget.CardView
+                style="@style/Card"
+                android:id="@+id/main_card_workedHours"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/main_card_timeLeftToWork"
+                card_view:cardCornerRadius="4dp"
+                card_view:cardElevation="4dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="5dp">
 
+                <LinearLayout
+                    android:id="@+id/mainLinearLayoutWorkedHours"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/mainIconWorkedHoursMonth"
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@string/wtfWorkedHours"
+                        android:padding="10dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/calendar" />
+
+                    <TextView
+                        android:id="@+id/main_text_workedHoursSum_value"
+                        style="@style/TextCard.bigText"
+                        android:paddingEnd="50dp"
+                        tools:ignore="RtlSymmetry"
+                        tools:text="40:00" />
+
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                style="@style/Card"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/main_card_workedHours"
+                card_view:cardCornerRadius="4dp"
+                card_view:cardElevation="4dp">
+
+                <LinearLayout
+                    android:id="@+id/mainLinearLayoutNote"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <ImageView
+                        android:id="@+id/mainIconWorkedNote"
+                        android:layout_width="50dp"
+                        android:layout_height="55dp"
+                        android:contentDescription="@string/wtfWorkedHours"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_edit"/>
+
+                    <TextView
+
+                        android:id="@+id/main_text_note"
+                        style="@style/TextCard.gravityStart"
+                        android:minHeight="55dp"
+                        tools:ignore="RtlSymmetry"
+                        tools:text="Dear diary..." />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
 

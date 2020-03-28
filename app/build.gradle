@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 29
@@ -38,9 +40,9 @@ dependencies {
     //Material
     implementation 'com.google.android.material:material:1.1.0'
     //Room
-    implementation "androidx.room:room-runtime:2.2.4"
-    annotationProcessor "androidx.room:room-compiler:2.2.4"
-    implementation 'androidx.room:room-rxjava2:2.2.4'
+    implementation "androidx.room:room-runtime:2.2.5"
+    annotationProcessor "androidx.room:room-compiler:2.2.5"
+    implementation 'androidx.room:room-rxjava2:2.2.5'
     //Rx
     implementation 'io.reactivex.rxjava2:rxjava:2.2.11'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
@@ -66,4 +68,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:17.2.3'
 
     implementation 'com.facebook.stetho:stetho:1.5.1'
+    implementation 'it.sephiroth.android.library.targettooltip:target-tooltip-library:2.0.3'
 }

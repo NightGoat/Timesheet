@@ -19,6 +19,21 @@
     <string name="saved">Успешно сохранено в:</string>
     <string name="error">Ошибка:</string>
     <string name="timeMonth">Отработано в этом месяце:</string>
+    <string name="came">Пришел</string>
+    <string name="gone">Ушел</string>
+    <string name="turnOnApp">Открыть приложение timesheet</string>
+    <string name="small_widget">Две кнопки</string>
+    <string name="medium_widget">Три кнопки</string>
+    <string name="closeSearch">Закрыть панель поиска</string>
+    <string name="shot_wtf">Помощь</string>
+    <string name="wtfCame">Когда вы пришли на работу</string>
+    <string name="wtfGone">Когда вы ушли с работы</string>
+    <string name="wtfTimeWasOnWork">Как долго вы были на работе сегодня</string>
+    <string name="wtfTimeLeftToWork">Сколько недоработали/переработали.</string>
+    <string name="wtfWorkedHours">Сколько вы отработали в этом месяце</string>
+    <string name="note">Заметка</string>
+    <string name="save">Сохранить</string>
+    <string name="wtfNote">Заметка об этом дне</string>
 
     <string-array name="month">
         <item>Январь</item>

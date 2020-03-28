@@ -14,10 +14,14 @@
         app:showAsAction="ifRoom"/>
 
     <item android:id="@+id/action_settings"
+        android:icon="@drawable/ic_settings_black_24dp"
         android:title="@string/action_settings"
         app:showAsAction="never"/>
 
-
+    <item android:id="@+id/action_wtf"
+        android:icon="@drawable/ic_help_outline_black_24dp"
+        android:title="@string/shot_wtf"
+        app:showAsAction="never"/>
 
 
 </menu>

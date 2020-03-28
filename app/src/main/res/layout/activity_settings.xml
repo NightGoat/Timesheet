@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.list.ListActivity">
+    tools:context=".presentation.list.ListActivity"
+    android:background="@color/colorLightGreyBackground">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/settings_toolbar_layout"
@@ -97,16 +98,5 @@
         android:text="@string/cleanDB"
         app:layout_constraintTop_toBottomOf="@id/settings_openExcel_Btn" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="App icon is Time Machine icon by Icons8 \n https://icons8.com/icon/set/time-tracking/dusk"
-        app:layout_constraintTop_toBottomOf="@id/settings_cleanDB_Btn"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:autoLink="web"
-        android:gravity="center"
-        tools:ignore="HardcodedText"
-        android:layout_marginTop="16dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

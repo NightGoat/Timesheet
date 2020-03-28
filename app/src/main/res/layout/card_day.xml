@@ -17,7 +17,7 @@
 
         <TextView
             android:id="@+id/card_date_textView"
-            android:layout_width="40dp"
+            android:layout_width="50dp"
             android:layout_height="0dp"
             android:textSize="16sp"
             tools:text="01 Wed"
@@ -37,7 +37,7 @@
             card_view:layout_constraintTop_toTopOf="parent"
             card_view:layout_constraintBottom_toBottomOf="@id/card_chipGroup"
             android:layout_marginEnd="2dp"
-            android:src="@drawable/ic_cancel"
+            android:src="@drawable/ic_cancel_white"
             android:background="@android:color/transparent"
             android:contentDescription="@string/delete"
             android:scaleType="fitCenter"

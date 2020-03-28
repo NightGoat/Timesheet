@@ -37,5 +37,4 @@ public class ResourceHolder implements IResourceHolder {
     public String getString(int resource) {
         return context.getString(resource);
     }
-
 }

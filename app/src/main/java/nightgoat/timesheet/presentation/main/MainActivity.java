@@ -8,6 +8,7 @@ import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,12 +18,13 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import it.sephiroth.android.library.xtooltip.ClosePolicy;
+import it.sephiroth.android.library.xtooltip.Tooltip;
 import nightgoat.timesheet.App;
 import nightgoat.timesheet.R;
 import nightgoat.timesheet.databinding.ActivityMainBinding;
 import nightgoat.timesheet.di.AppComponent;
-import nightgoat.timesheet.di.DaggerActivityComponent;
-import nightgoat.timesheet.di.InteractorModule;
+import nightgoat.timesheet.di.DaggerMainActivityComponent;
 import nightgoat.timesheet.presentation.list.ListActivity;
 import nightgoat.timesheet.presentation.settings.SettingsActivity;
 import nightgoat.timesheet.utils.TimeUtils;
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private GestureDetector gestureDetector;
     private Integer day, month, year;
+    private String note;
 
     @SuppressWarnings("unused")
     private static final String TAG = MainActivity.class.getName();
@@ -47,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        setSupportActionBar(binding.activityMainToolbar);
+        setSupportActionBar(binding.mainToolbar);
         initViewModel();
         gestureDetector = new GestureDetector(this, new MyGestureListener());
         initViewModelObservations();
@@ -55,81 +58,93 @@ public class MainActivity extends AppCompatActivity {
         initNextDayBtnClickListener();
         initCameBtnClickListener();
         initGoneBtnClickListener();
-        initCameEditTextClickListener();
-        initGoneEditTextClickListener();
-        initDayEditTextClickListener();
-        initCameTextInputLayoutEndIconClickListener();
-        initGoneTextInputLayoutEndIconClickListener();
+        initCameTextClickListener();
+        initGoneTextClickListener();
+        initDayTextClickListener();
+        initCameDeleteBtnClickListener();
+        initGoneDeleteBtnClickListener();
+        initNoteTextClickListener();
+    }
+
+    private void initNoteTextClickListener() {
+        binding.mainTextNote.setOnClickListener(v -> {
+          Intent intent = new Intent(this, NoteActivity.class);
+          intent.putExtra("date", binding.mainTextDate.getText().toString());
+          intent.putExtra("dayOfWeek", binding.mainTextDayOfWeek.getText().toString());
+          intent.putExtra("noteText", binding.mainTextNote.getText().toString());
+          startActivityForResult(intent, 2);
+        });
     }
 
     private void initViewModel() {
         AppComponent component = ((App) getApplication()).getAppComponent();
-        DaggerActivityComponent.builder()
+        DaggerMainActivityComponent.builder()
                 .setActivity(this)
                 .setDependencies(component)
-                .interactorModule(new InteractorModule())
                 .build()
                 .inject(this);
         getLifecycle().addObserver(mViewModel);
     }
 
     private void initViewModelObservations() {
-        mViewModel.timeCameLiveData.observe(this, data ->
-                binding.activityMainCameTextInputEditText.setText(data));                            //Пришел:
-        mViewModel.timeGoneLiveData.observe(this, data ->
-                binding.activityMainGoneTextInputEditText.setText(data));                            //Ушел
-        mViewModel.dateLiveData.observe(this, data -> {                                        //Дата
-                    if (data.equals(TimeUtils.getCurrentDateNormalFormat()))
-                        binding.activityMainDayTextInputEditText
-                                .setTextColor(getResources().getColor(R.color.colorPrimary));
-                    else binding.activityMainDayTextInputEditText
-                            .setTextColor(getResources().getColor(R.color.colorGrey));
-                    binding.activityMainDayTextInputEditText.setText(data);
-                }
-        );
-        mViewModel.dayOfWeekLiveData.observe(this, data ->
-                binding.activityMainDayTextInputLayout.setHint(data));                               //День недели
-        mViewModel.timeWasOnWorkLiveData.observe(this, data ->
-                binding.activityMainTimeWasOnWorkTextInputEditText.setText(data));                   //Был на работе
-        mViewModel.timeLeftToWorkTodayLiveData.observe(this, data ->
-                binding.activityMainTimeLeftToWorkTextInputEditText.setText(data));                  //Осталось работать
-        mViewModel.dayLiveData.observe(this, data -> day = data);                              //День,  для DatePickerDialog
-        mViewModel.monthLiveData.observe(this, data -> month = data - 1);                      //Месяц для DatePickerDialog
-        mViewModel.yearLiveData.observe(this, data -> year = data);                            // Год для DatePickerDialog
-        mViewModel.isGoneTimeExistLiveData.observe(this, isGoneTimeExist -> {
-            binding.activityMainGoneTextInputLayout.setEndIconVisible(isGoneTimeExist);
-            if (isGoneTimeExist) {
-                binding.activityMainGoneTextInputEditText
-                        .setTextColor(getResources().getColor(R.color.colorAccent));
-                binding.activityMainTimeWasOnWorkTextInputEditText
-                        .setTextColor(getResources().getColor(R.color.colorPrimary));
+        mViewModel.containerLiveData.observe(this, dataContainer -> {
+            if (dataContainer.timeCame != null) {
+                binding.mainBtnDeleteCame.setVisibility(View.VISIBLE);
+                binding.mainTextCameValue.setText(dataContainer.timeCame);
             } else {
-                binding.activityMainGoneTextInputEditText
-                        .setTextColor(getResources().getColor(R.color.colorLightGrey));
-                binding.activityMainTimeWasOnWorkTextInputEditText
-                        .setTextColor(getResources().getColor(R.color.colorLightGrey));
+                binding.mainBtnDeleteCame.setVisibility(View.INVISIBLE);
+                binding.mainTextCameValue.setText(null);
             }
+            binding.mainTextGoneValue.setText(dataContainer.timeGone);
+            if (dataContainer.date != null && dataContainer.date.equals(TimeUtils.getCurrentDateNormalFormat()))
+                binding.mainTextDate
+                        .setTextColor(getResources().getColor(R.color.colorPrimary));
+            else binding.mainTextDate
+                    .setTextColor(getResources().getColor(R.color.colorGrey));
+            binding.mainTextDate.setText(dataContainer.date);
+            binding.mainTextDayOfWeek.setText(dataContainer.dayOfWeek);
+            binding.mainTextTimeWasOnWork.setText(dataContainer.timeWasOnWork);
+            binding.mainTextTimeLeftToWork.setText(dataContainer.timeLeftToWorkToday);
+            day = dataContainer.day;
+            month = dataContainer.month;
+            year = dataContainer.year;
+            if (dataContainer.isGoneTimeExist != null) {
+                if (dataContainer.isGoneTimeExist) {
+                    binding.mainBtnDeleteGone.setVisibility(View.VISIBLE);
+                    binding.mainTextGoneValue
+                            .setTextColor(getResources().getColor(R.color.colorAccent));
+                    binding.mainTextTimeWasOnWork
+                            .setTextColor(getResources().getColor(R.color.colorPrimary));
+                } else {
+                    binding.mainBtnDeleteGone.setVisibility(View.INVISIBLE);
+                    binding.mainTextGoneValue
+                            .setTextColor(getResources().getColor(R.color.colorLightGrey));
+                    binding.mainTextTimeWasOnWork
+                            .setTextColor(getResources().getColor(R.color.colorLightGrey));
+                }
+            }
+            binding.mainTextWorkedHoursSumValue.setText(dataContainer.workedHoursSum);
+            note = dataContainer.note;
+            binding.mainTextNote.setText(note);
         });
-        mViewModel.workedHoursSumLiveData.observe(this, data ->
-                binding.activityMainWorkedHoursSumTextView2.setText(data));
     }
 
-    private void initGoneTextInputLayoutEndIconClickListener() {
-        binding.activityMainGoneTextInputLayout
-                .setEndIconOnClickListener(v -> mViewModel.setGoneTime(null));
+    private void initGoneDeleteBtnClickListener() {
+        binding.mainBtnDeleteGone
+                .setOnClickListener(v -> mViewModel.setGoneTime(null));
     }
 
-    private void initCameTextInputLayoutEndIconClickListener() {
-        binding.activityMainCameTextInputLayout
-                .setEndIconOnClickListener(v -> mViewModel.setCameTime(null));
+    private void initCameDeleteBtnClickListener() {
+        binding.mainBtnDeleteCame
+                .setOnClickListener(v -> mViewModel.setCameTime(null));
     }
 
     public void initPreviousDayBtnClickListener() {
-        binding.activityMainPreviousDayBtn.setOnClickListener(v -> mViewModel.setPreviousDay());
+        binding.mainBtnPreviousDay.setOnClickListener(v -> mViewModel.setPreviousDay());
     }
 
     public void initNextDayBtnClickListener() {
-        binding.activityMainNextDayBtn.setOnClickListener(v -> mViewModel.setNextDay());
+        binding.mainBtnNextDay.setOnClickListener(v -> mViewModel.setNextDay());
     }
 
     public void initCameBtnClickListener() {
@@ -142,8 +157,8 @@ public class MainActivity extends AppCompatActivity {
                 mViewModel.setGoneTime(TimeUtils.getCurrentTime()));
     }
 
-    public void initCameEditTextClickListener() {
-        binding.activityMainCameTextInputEditText.setOnClickListener(v -> {
+    public void initCameTextClickListener() {
+        binding.mainTextCameValue.setOnClickListener(v -> {
             TimePickerDialog tpd = new TimePickerDialog(this,
                     (view, hourOfDay, minuteOfDay) ->
                             mViewModel.setCameTime(TimeUtils.getTime(hourOfDay, minuteOfDay))
@@ -152,8 +167,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void initGoneEditTextClickListener() {
-        binding.activityMainGoneTextInputEditText.setOnClickListener(v -> {
+    public void initGoneTextClickListener() {
+        binding.mainTextGoneValue.setOnClickListener(v -> {
             TimePickerDialog tpd = new TimePickerDialog(this,
                     (view, hourOfDay, minuteOfDay) ->
                             mViewModel.setGoneTime(TimeUtils.getTime(hourOfDay, minuteOfDay)),
@@ -162,8 +177,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void initDayEditTextClickListener() {
-        binding.activityMainDayTextInputEditText.setOnClickListener(v -> showDatePickerDialog());
+    private void initDayTextClickListener() {
+        binding.mainLayoutDate.setOnClickListener(v -> showDatePickerDialog());
     }
 
     private void showDatePickerDialog() {
@@ -195,8 +210,32 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_settings:
                 goToSettingsActivity();
                 break;
+            case R.id.action_wtf:
+                ClosePolicy.Builder closePolicyBuilder = new ClosePolicy.Builder();
+                ClosePolicy closePolicy = closePolicyBuilder.outside(true).build();
+                Tooltip cameTooltip = createTooltip(binding.mainIconCame, R.string.wtfCame, closePolicy);
+                cameTooltip.show(binding.mainLinearLayoutCame, Tooltip.Gravity.RIGHT, true);
+                Tooltip goneTooltip = createTooltip(binding.mainIconGone, R.string.wtfGone, closePolicy);
+                goneTooltip.show(binding.mainLinearLayoutGone, Tooltip.Gravity.RIGHT, true);
+                Tooltip TimeWasOnWorkTooltip = createTooltip(binding.mainIconTimeWasOnWork, R.string.wtfTimeWasOnWork, closePolicy);
+                TimeWasOnWorkTooltip.show(binding.mainLinearLayoutTimeWasOnWork, Tooltip.Gravity.RIGHT, true);
+                Tooltip TimeLeftToWorkTooltip = createTooltip(binding.mainIconTimeLeftToWork, R.string.wtfTimeLeftToWork, closePolicy);
+                TimeLeftToWorkTooltip.show(binding.mainLinearLayoutTimeLeftToWork, Tooltip.Gravity.RIGHT, true);
+                Tooltip WorkedHoursMonthTooltip = createTooltip(binding.mainIconWorkedHoursMonth, R.string.wtfWorkedHours, closePolicy);
+                WorkedHoursMonthTooltip.show(binding.mainLinearLayoutWorkedHours, Tooltip.Gravity.RIGHT, true);
+                Tooltip NoteTooltip = createTooltip(binding.mainIconWorkedNote, R.string.wtfNote, closePolicy);
+                NoteTooltip.show(binding.mainLinearLayoutNote, Tooltip.Gravity.RIGHT, true);
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private Tooltip createTooltip(View anchor, int textId, ClosePolicy closePolicy){
+        return new Tooltip.Builder(this)
+                .anchor(anchor, 0, 0, false)
+                .text(getString(textId))
+                .closePolicy(closePolicy)
+                .create();
     }
 
     private void goToListActivity() {
@@ -207,8 +246,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (data != null) {
-            mViewModel.getDayEntity(data.getStringExtra("day"));
+            switch (requestCode) {
+                case 1:
+                    mViewModel.getDayEntity(data.getStringExtra("day"));
+                    break;
+                case 2:
+                    mViewModel.updateNote(data.getStringExtra("noteText"));
+            }
         }
     }
 
