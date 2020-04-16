@@ -1,6 +1,7 @@
 ## Timesheet android app.
 ![App logo](/gitImages/Card.png)
-##### Libraries:
+##### Features:
+* Java
 * MVVM
 * Dagger2
 * Room
