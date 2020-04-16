@@ -34,6 +34,7 @@
     <string name="note">Заметка</string>
     <string name="save">Сохранить</string>
     <string name="wtfNote">Заметка об этом дне</string>
+    <string name="edit">Изменить</string>
 
     <string-array name="month">
         <item>Январь</item>
