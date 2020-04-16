@@ -34,7 +34,7 @@
         android:layout_weight="1"
         android:layout_height="match_parent"
         android:backgroundTint="@android:color/white"
-        android:src="@mipmap/round_timesheet_big"
+        android:src="@mipmap/timesheet_icon_round"
         android:scaleType="fitCenter"
         android:contentDescription="@string/turnOnApp"
         />
