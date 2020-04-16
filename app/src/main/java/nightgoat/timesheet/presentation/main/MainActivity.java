@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -63,17 +64,36 @@ public class MainActivity extends AppCompatActivity {
         initDayTextClickListener();
         initCameDeleteBtnClickListener();
         initGoneDeleteBtnClickListener();
-        initNoteTextClickListener();
+        registerForContextMenu(binding.mainTextNote);
     }
 
     private void initNoteTextClickListener() {
-        binding.mainTextNote.setOnClickListener(v -> {
           Intent intent = new Intent(this, NoteActivity.class);
           intent.putExtra("date", binding.mainTextDate.getText().toString());
           intent.putExtra("dayOfWeek", binding.mainTextDayOfWeek.getText().toString());
           intent.putExtra("noteText", binding.mainTextNote.getText().toString());
           startActivityForResult(intent, 2);
-        });
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        if (v.getId() == R.id.main_text_note) {
+            menu.add(0, 1, 0, getString(R.string.edit));
+            menu.add(0, 0, 1, getString(R.string.delete));
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case 0:
+                mViewModel.updateNote("");
+                break;
+            case 1:
+                initNoteTextClickListener();
+                break;
+        }
+        return super.onContextItemSelected(item);
     }
 
     private void initViewModel() {

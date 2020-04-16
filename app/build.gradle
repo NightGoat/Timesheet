@@ -10,8 +10,8 @@ android {
         applicationId "nightgoat.timesheet"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -61,12 +61,12 @@ dependencies {
     //logger
     implementation 'com.jakewharton.timber:timber:4.7.1'
     //Dagger
-    implementation 'com.google.dagger:dagger:2.24'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.24'
+    implementation 'com.google.dagger:dagger:2.27'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.27'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
 
-    implementation 'com.google.firebase:firebase-analytics:17.2.3'
+    implementation 'com.google.firebase:firebase-analytics:17.3.0'
 
     implementation 'com.facebook.stetho:stetho:1.5.1'
     implementation 'it.sephiroth.android.library.targettooltip:target-tooltip-library:2.0.3'

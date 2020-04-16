@@ -319,7 +319,6 @@
                         android:src="@drawable/ic_edit" />
 
                     <TextView
-
                         android:id="@+id/main_text_note"
                         style="@style/TextCard.gravityStart"
                         android:minHeight="55dp"
