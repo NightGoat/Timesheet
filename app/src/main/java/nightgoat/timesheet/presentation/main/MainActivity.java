@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,7 +31,7 @@ import nightgoat.timesheet.presentation.list.ListActivity;
 import nightgoat.timesheet.presentation.settings.SettingsActivity;
 import nightgoat.timesheet.utils.TimeUtils;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
     @Inject
     DaysViewModel mViewModel;
@@ -64,7 +65,30 @@ public class MainActivity extends AppCompatActivity {
         initDayTextClickListener();
         initCameDeleteBtnClickListener();
         initGoneDeleteBtnClickListener();
-        registerForContextMenu(binding.mainTextNote);
+        initNoteEditClickListener();
+    }
+
+    private void initNoteEditClickListener() {
+        binding.mainBtnNoteContextMenu.setOnClickListener(v -> {
+            PopupMenu popupMenu = new PopupMenu(this, v);
+            popupMenu.setOnMenuItemClickListener(this);
+            popupMenu.inflate(R.menu.main_activity_note_menu);
+            popupMenu.show();
+        });
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_edit:
+                initNoteTextClickListener();
+                return true;
+            case R.id.action_delete:
+                mViewModel.updateNote("");
+                return true;
+            default:
+                return false;
+        }
     }
 
     private void initNoteTextClickListener() {
@@ -73,27 +97,6 @@ public class MainActivity extends AppCompatActivity {
           intent.putExtra("dayOfWeek", binding.mainTextDayOfWeek.getText().toString());
           intent.putExtra("noteText", binding.mainTextNote.getText().toString());
           startActivityForResult(intent, 2);
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        if (v.getId() == R.id.main_text_note) {
-            menu.add(0, 1, 0, getString(R.string.edit));
-            menu.add(0, 0, 1, getString(R.string.delete));
-        }
-    }
-
-    @Override
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case 0:
-                mViewModel.updateNote("");
-                break;
-            case 1:
-                initNoteTextClickListener();
-                break;
-        }
-        return super.onContextItemSelected(item);
     }
 
     private void initViewModel() {
@@ -283,7 +286,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
     @Override
     protected void onPause() {
         mViewModel.deleteEmptyEntities();
@@ -301,7 +303,6 @@ public class MainActivity extends AppCompatActivity {
         super.dispatchTouchEvent(event);
         return gestureDetector.onTouchEvent(event);
     }
-
 
     class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
