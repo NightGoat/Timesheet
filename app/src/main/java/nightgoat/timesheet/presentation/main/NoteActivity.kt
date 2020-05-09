@@ -12,8 +12,11 @@ class NoteActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val oldText = intent.getStringExtra("noteText")
         setContentView(R.layout.activity_note)
         note_btn_cancel.setOnClickListener {
+            intent.putExtra("noteText", oldText)
+            setResult(Activity.RESULT_OK, intent)
             finish()
         }
         note_btn_save.setOnClickListener {
