@@ -27,18 +27,15 @@ import nightgoat.timesheet.di.DaggerListActivityComponent;
 import nightgoat.timesheet.presentation.ActivityAdapterCallbacks;
 import nightgoat.timesheet.presentation.settings.SettingsActivity;
 import nightgoat.timesheet.utils.DateType;
-import nightgoat.timesheet.utils.mTextWatcher;
 import nightgoat.timesheet.utils.TimeType;
 import nightgoat.timesheet.utils.TimeUtils;
+import nightgoat.timesheet.utils.mTextWatcher;
 import timber.log.Timber;
 
 public class ListActivity extends AppCompatActivity implements ActivityAdapterCallbacks {
 
     private ActivityListBinding binding;
     private ListAdapter adapter;
-
-    @SuppressWarnings("unused")
-    private final static String TAG = ListActivity.class.getName();
 
     private String month, year;
 

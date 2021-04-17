@@ -10,10 +10,10 @@ import java.util.Objects;
 
 public class ResourceHolder implements IResourceHolder {
 
-    private Context context;
-    private SharedPreferences sharedPreferences;
+    private final Context context;
+    private final SharedPreferences sharedPreferences;
 
-    public ResourceHolder(Context context){
+    public ResourceHolder(Context context) {
         this.context = context;
         sharedPreferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
     }

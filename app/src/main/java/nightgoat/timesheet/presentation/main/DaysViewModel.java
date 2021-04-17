@@ -32,13 +32,13 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
 
     private final String TAG = DaysViewModel.class.getName();
 
-    private DataContainer dataContainer;
+    private final DataContainer dataContainer;
     MutableLiveData<DataContainer> containerLiveData = new MutableLiveData<>();
     private final CompositeDisposable mDisposable = new CompositeDisposable();
 
     private List<DayEntity> days;
-    private Interactor interactor;
-    private Calendar calendar;
+    private final Interactor interactor;
+    private final Calendar calendar;
     private String date;
     private String timeCome;
     private String timeGone;
@@ -46,7 +46,7 @@ public class DaysViewModel extends ViewModel implements LifecycleObserver {
     private String timeNeedToWork;
     private String timeDifference;
     private DayEntity dayEntity;
-    private IResourceHolder resourceHolder;
+    private final IResourceHolder resourceHolder;
     private int cachedMonth;
     private int cachedYear;
     private int month;

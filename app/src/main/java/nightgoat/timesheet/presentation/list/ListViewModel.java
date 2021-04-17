@@ -21,7 +21,7 @@ import timber.log.Timber;
 public class ListViewModel extends ViewModel implements LifecycleObserver {
 
     private static final String TAG = ListViewModel.class.getName();
-    private Interactor interactor;
+    private final Interactor interactor;
     MutableLiveData<List<DayEntity>> daysLD = new MutableLiveData<>();
     MutableLiveData<Set<String>> monthLD = new MutableLiveData<>();
     MutableLiveData<Set<String>> yearsLD = new MutableLiveData<>();

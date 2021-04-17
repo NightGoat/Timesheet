@@ -1,12 +1,5 @@
 package nightgoat.timesheet.presentation.settings;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.MediaStore;
-import android.widget.Button;
-
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -14,7 +7,6 @@ import androidx.lifecycle.ViewModel;
 import com.ajts.androidmads.library.SQLiteToExcel;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import nightgoat.timesheet.IResourceHolder;
@@ -33,10 +25,10 @@ public class SettingsViewModel extends ViewModel implements LifecycleObserver {
     MutableLiveData<String> snackBarMessageLiveData = new MutableLiveData<>();
 
 
-    private Interactor interactor;
-    private IResourceHolder resourceHolder;
+    private final Interactor interactor;
+    private final IResourceHolder resourceHolder;
 
-    private String directory_path;
+    private final String directory_path;
     private final String filename = "TimeToWork.xls";
 
     public SettingsViewModel(Interactor interactor, IResourceHolder resourceHolder) {
@@ -56,27 +48,6 @@ public class SettingsViewModel extends ViewModel implements LifecycleObserver {
             Timber.tag(TAG).v("File Created%s", String.valueOf(directory.mkdirs()));
         }
         SQLiteToExcel sqLiteToExcel = resourceHolder.createSQLiteToExcel();
-//        sqLiteToExcel.exportAllTables(filename, new SQLiteToExcel.ExportListener() {
-//            @Override
-//            public void onStart() {
-//                isProgressBarVisible.setValue(true);
-//            }
-//
-//            @Override
-//            public void onCompleted(String filePath) {
-//                snackBarMessageActionLiveData.setValue(resourceHolder.getString(R.string.saved) + " " + filePath);
-//                isProgressBarVisible.setValue(false);
-//                isOpenExcelFileBtnEnabled.setValue(true);
-//                checkIsExcelFileExists();
-//            }
-//
-//            @Override
-//            public void onError(Exception e) {
-//                snackBarMessageLiveData.setValue(resourceHolder.getString(R.string.error) + e.getMessage());
-//                isOpenExcelFileBtnEnabled.setValue(false);
-//                isProgressBarVisible.setValue(false);
-//            }
-//        });
         sqLiteToExcel.exportSingleTable("days", filename, new SQLiteToExcel.ExportListener() {
             @Override
             public void onStart() {

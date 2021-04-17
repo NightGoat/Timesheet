@@ -1,10 +1,8 @@
 package nightgoat.timesheet.domain;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
-import io.reactivex.CompletableObserver;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.schedulers.Schedulers;
@@ -13,7 +11,7 @@ import nightgoat.timesheet.utils.TimeUtils;
 
 public class Interactor {
 
-    private DaysRepository daysDataSource;
+    private final DaysRepository daysDataSource;
     public Interactor(DaysRepository daysDataSource) {
         this.daysDataSource = daysDataSource;
     }

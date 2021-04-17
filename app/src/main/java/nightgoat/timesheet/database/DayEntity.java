@@ -14,7 +14,7 @@ public class DayEntity {
     @PrimaryKey
     @ColumnInfo(name = "date")
     @NonNull
-    private String date;
+    private final String date;
 
     private String note;
 
