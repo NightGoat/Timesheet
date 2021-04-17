@@ -9,9 +9,9 @@ android {
     defaultConfig {
         applicationId "nightgoat.timesheet"
         minSdkVersion 21
-        targetSdkVersion 29
-        versionCode 2
-        versionName "1.1"
+        targetSdkVersion 30
+        versionCode 3
+        versionName "1.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -32,26 +32,26 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     //Test
-    testImplementation 'junit:junit:4.13'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    testImplementation 'junit:junit:4.13.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     //Material
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.google.android.material:material:1.3.0'
     //Room
-    implementation "androidx.room:room-runtime:2.2.5"
-    annotationProcessor "androidx.room:room-compiler:2.2.5"
-    implementation 'androidx.room:room-rxjava2:2.2.5'
+    implementation "androidx.room:room-runtime:2.2.6"
+    annotationProcessor "androidx.room:room-compiler:2.2.6"
+    implementation 'androidx.room:room-rxjava2:2.2.6'
     //Rx
     implementation 'io.reactivex.rxjava2:rxjava:2.2.11'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.3.1'
     //noinspection LifecycleAnnotationProcessorWithJava8
-    annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.2.0'
+    annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.3.1'
     //Joda time
     implementation 'net.danlew:android.joda:2.10.3'
     //SQLite to Excel
@@ -61,12 +61,12 @@ dependencies {
     //logger
     implementation 'com.jakewharton.timber:timber:4.7.1'
     //Dagger
-    implementation 'com.google.dagger:dagger:2.27'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.27'
+    implementation 'com.google.dagger:dagger:2.33'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.28.1'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
 
-    implementation 'com.google.firebase:firebase-analytics:17.3.0'
+    implementation 'com.google.firebase:firebase-analytics:18.0.3'
 
     implementation 'com.facebook.stetho:stetho:1.5.1'
     implementation 'it.sephiroth.android.library.targettooltip:target-tooltip-library:2.0.3'

@@ -15,16 +15,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nightgoat.timesheet.R;
-import nightgoat.timesheet.utils.TimeType;
-import nightgoat.timesheet.utils.TimeUtils;
 import nightgoat.timesheet.database.DayEntity;
 import nightgoat.timesheet.presentation.ActivityAdapterCallbacks;
+import nightgoat.timesheet.utils.TimeType;
+import nightgoat.timesheet.utils.TimeUtils;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
-    private List<DayEntity> data = new ArrayList<>();
-    private List<DayEntity> sourceData = new ArrayList<>();
-    private ActivityAdapterCallbacks activity;
+    private final List<DayEntity> data = new ArrayList<>();
+    private final List<DayEntity> sourceData = new ArrayList<>();
+    private final ActivityAdapterCallbacks activity;
 
     ListAdapter(ActivityAdapterCallbacks activity) {
         this.activity = activity;
@@ -39,10 +39,12 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     void filter(String query) {
         data.clear();
         for (DayEntity dayEntity : sourceData) {
-            if (TimeUtils.getDateInNormalFormat(dayEntity.getDate())
+            boolean isDateExist = TimeUtils.getDateInNormalFormat(dayEntity.getDate())
                     .toLowerCase()
-                    .contains(query.toLowerCase()))
+                    .contains(query.toLowerCase());
+            if (isDateExist) {
                 data.add(dayEntity);
+            }
         }
         notifyDataSetChanged();
     }
@@ -68,9 +70,12 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView cardDateTV, cardNote;
-        private Chip chipCame, chipGone, chipWas;
-        private ImageButton deleteBtn;
+        private final TextView cardDateTV;
+        private final TextView cardNote;
+        private final Chip chipCame;
+        private final Chip chipGone;
+        private final Chip chipWas;
+        private final ImageButton deleteBtn;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -86,11 +91,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             String dateTitle = day.getDate().substring(8, 10) + " " + TimeUtils.getDayOfTheWeek(day.getDate());
             cardDateTV.setText(dateTitle);
             this.itemView.setOnClickListener(v -> activity.onClickFinish(day.getDate()));
-            if (day.getTimeCame() == null) chipCame.setCloseIconVisible(false);
-            else chipCame.setCloseIconVisible(true);
+            chipCame.setCloseIconVisible(day.getTimeCame() != null);
             chipCame.setText(day.getTimeCame());
-            if (day.getTimeGone() == null) chipGone.setCloseIconVisible(false);
-            else chipGone.setCloseIconVisible(true);
+            chipGone.setCloseIconVisible(day.getTimeGone() != null);
             chipGone.setText(day.getTimeGone());
             chipWas.setText(day.getTimeWorked());
             chipGone.setOnClickListener(v -> activity.onClickChip(day, TimeType.GONE));

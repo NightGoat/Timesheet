@@ -12,7 +12,7 @@ import nightgoat.timesheet.ResourceHolder;
 @Module
 public class ContextModule {
 
-    private Context context;
+    private final Context context;
 
     public ContextModule(Context context){
         this.context = context;

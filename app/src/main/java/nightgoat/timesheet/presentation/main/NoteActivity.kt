@@ -21,13 +21,15 @@ class NoteActivity : AppCompatActivity() {
         }
         note_btn_save.setOnClickListener {
             val intent = Intent()
-            intent.putExtra("noteText",note_edit.text.toString())
+            intent.putExtra("noteText", note_edit.text.toString())
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
         note_text_date.text = intent.getStringExtra("date")
         note_text_dayOfWeek.text = intent.getStringExtra("dayOfWeek")
         note_edit.setText(intent.getStringExtra("noteText"))
-        if(note_edit.requestFocus()) window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        if (note_edit.requestFocus()) {
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        }
     }
 }
